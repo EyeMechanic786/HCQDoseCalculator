@@ -86,6 +86,7 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     tamoxifen: formState.tamoxifen,
     macularPathology: formState.macularPathology,
     ageAtStartOver60: formState.ageAtStartOver60,
+    hcqFiveYearsOrMore: formState.hcqFiveYearsOrMore,
     hcqTwentyYearsOrMore: formState.hcqTwentyYearsOrMore,
   });
 
@@ -161,6 +162,7 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     tamoxifen: yesNoExport(formState.tamoxifen),
     macular_pathology: yesNoExport(formState.macularPathology),
     hcq_started_after_60: yesNoExport(formState.ageAtStartOver60),
+    on_hcq_ge_5_years: yesNoExport(formState.hcqFiveYearsOrMore),
     on_hcq_ge_20_years: yesNoExport(formState.hcqTwentyYearsOrMore),
     risk_factors_complete: screening.riskFactorsComplete ? 'Y' : 'N',
     identified_risk_count: screening.identifiedRiskFactors.length,
@@ -215,6 +217,7 @@ export function getScreeningForExport(
     tamoxifen: formState.tamoxifen,
     macularPathology: formState.macularPathology,
     ageAtStartOver60: formState.ageAtStartOver60,
+    hcqFiveYearsOrMore: formState.hcqFiveYearsOrMore,
     hcqTwentyYearsOrMore: formState.hcqTwentyYearsOrMore,
   });
 }

@@ -41,6 +41,7 @@ function parseRiskFactors(state: FormState): ScreeningRiskFactors {
     tamoxifen: state.tamoxifen,
     macularPathology: state.macularPathology,
     ageAtStartOver60: state.ageAtStartOver60,
+    hcqFiveYearsOrMore: state.hcqFiveYearsOrMore,
     hcqTwentyYearsOrMore: state.hcqTwentyYearsOrMore,
   };
 }
@@ -216,6 +217,7 @@ function readFormFromDom(): void {
   formState.tamoxifen = readYesNo('tamoxifen');
   formState.macularPathology = readYesNo('macularPathology');
   formState.ageAtStartOver60 = readYesNo('ageAtStartOver60');
+  formState.hcqFiveYearsOrMore = readYesNo('hcqFiveYearsOrMore');
   formState.hcqTwentyYearsOrMore = readYesNo('hcqTwentyYearsOrMore');
   const screeningDetails = document.querySelector('.screening-risks') as HTMLDetailsElement | null;
   if (screeningDetails) formState.screeningRisksOpen = screeningDetails.open;

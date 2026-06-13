@@ -12,6 +12,7 @@ const RISK_FACTOR_LABELS: Record<keyof ScreeningRiskFactors, string> = {
   tamoxifen: 'Concurrent tamoxifen',
   macularPathology: 'Macular pathology',
   ageAtStartOver60: 'HCQ started after age 60',
+  hcqFiveYearsOrMore: 'On HCQ ≥5 years',
   hcqTwentyYearsOrMore: 'On HCQ ≥20 years',
 };
 
@@ -48,7 +49,7 @@ export function getScreeningGuidance(
   const deferFirstFiveYears =
     complete &&
     !elevatedRisk &&
-    !isYes(risks.hcqTwentyYearsOrMore);
+    !isYes(risks.hcqFiveYearsOrMore);
 
   const recommendations: string[] = [
     'Baseline screening (fundus, OCT, wide-field FAF) soon after HCQ is started — for comparison with later exams.',
@@ -83,8 +84,11 @@ export function getScreeningGuidance(
     riskNotes.push('Pre-existing macular pathology — baseline comparison and close monitoring advised.');
   }
   if (isYes(risks.ageAtStartOver60)) riskNotes.push('HCQ initiation at older age increases risk.');
+  if (isYes(risks.hcqFiveYearsOrMore)) {
+    riskNotes.push('On HCQ ≥5 years — annual screening advised.');
+  }
   if (isYes(risks.hcqTwentyYearsOrMore)) {
-    riskNotes.push('On HCQ ≥20 years — annual screening advised.');
+    riskNotes.push('On HCQ ≥20 years — prolonged exposure increases retinopathy risk.');
   }
   if (assessment?.cap400Warning) {
     riskNotes.push('Current dose exceeds 400 mg/day cap for severe obesity.');

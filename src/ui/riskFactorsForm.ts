@@ -6,6 +6,7 @@ type RiskFactorKey =
   | 'tamoxifen'
   | 'macularPathology'
   | 'ageAtStartOver60'
+  | 'hcqFiveYearsOrMore'
   | 'hcqTwentyYearsOrMore';
 
 const RISK_KEYS: RiskFactorKey[] = [
@@ -13,6 +14,7 @@ const RISK_KEYS: RiskFactorKey[] = [
   'tamoxifen',
   'macularPathology',
   'ageAtStartOver60',
+  'hcqFiveYearsOrMore',
   'hcqTwentyYearsOrMore',
 ];
 
@@ -61,6 +63,7 @@ export function renderScreeningRiskFactors(state: FormState): string {
         ${yesNoRow('tamoxifen', 'Concurrent tamoxifen', state.tamoxifen)}
         ${yesNoRow('macularPathology', 'Macular pathology', state.macularPathology)}
         ${yesNoRow('ageAtStartOver60', 'HCQ started after age 60', state.ageAtStartOver60)}
+        ${yesNoRow('hcqFiveYearsOrMore', 'On HCQ ≥5 years', state.hcqFiveYearsOrMore)}
         ${yesNoRow('hcqTwentyYearsOrMore', 'On HCQ ≥20 years', state.hcqTwentyYearsOrMore)}
       </div>
     </details>

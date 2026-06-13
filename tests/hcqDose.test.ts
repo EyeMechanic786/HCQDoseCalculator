@@ -164,6 +164,7 @@ describe('screening risk factors', () => {
       tamoxifen: 'no',
       macularPathology: 'yes',
       ageAtStartOver60: 'no',
+      hcqFiveYearsOrMore: 'no',
       hcqTwentyYearsOrMore: 'no',
     });
     expect(guidance.elevatedRisk).toBe(true);
@@ -177,6 +178,7 @@ describe('screening risk factors', () => {
       tamoxifen: '',
       macularPathology: 'no',
       ageAtStartOver60: 'no',
+      hcqFiveYearsOrMore: 'no',
       hcqTwentyYearsOrMore: 'no',
     });
     expect(guidance.riskFactorsComplete).toBe(false);

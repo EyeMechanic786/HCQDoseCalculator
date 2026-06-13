@@ -68,6 +68,7 @@ export interface ScreeningRiskFactors {
   tamoxifen: YesNo;
   macularPathology: YesNo;
   ageAtStartOver60: YesNo;
+  hcqFiveYearsOrMore: YesNo;
   hcqTwentyYearsOrMore: YesNo;
 }
 

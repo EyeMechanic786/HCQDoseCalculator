@@ -16,6 +16,7 @@ export interface FormState {
   tamoxifen: YesNo;
   macularPathology: YesNo;
   ageAtStartOver60: YesNo;
+  hcqFiveYearsOrMore: YesNo;
   hcqTwentyYearsOrMore: YesNo;
   screeningRisksOpen: boolean;
 }
@@ -34,6 +35,7 @@ export const defaultFormState: FormState = {
   tamoxifen: '',
   macularPathology: '',
   ageAtStartOver60: '',
+  hcqFiveYearsOrMore: '',
   hcqTwentyYearsOrMore: '',
   screeningRisksOpen: false,
 };

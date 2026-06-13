@@ -13,6 +13,7 @@ const screeningComplete = getScreeningGuidance(assessment, {
   tamoxifen: 'no',
   macularPathology: 'no',
   ageAtStartOver60: 'no',
+  hcqFiveYearsOrMore: 'no',
   hcqTwentyYearsOrMore: 'no',
 });
 
@@ -21,6 +22,7 @@ const screeningWithRisk = getScreeningGuidance(assessment, {
   tamoxifen: 'no',
   macularPathology: 'yes',
   ageAtStartOver60: 'no',
+  hcqFiveYearsOrMore: 'yes',
   hcqTwentyYearsOrMore: 'yes',
 });
 
