@@ -9,11 +9,14 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "print-preview": "node --experimental-strip-types scripts/generate-print-preview.ts"
+    "print-preview": "node --experimental-strip-types scripts/generate-print-preview.ts",
+    "icons": "node scripts/generate-pwa-icons.mjs"
   },
   "devDependencies": {
+    "sharp": "^0.34.2",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
+    "vite-plugin-pwa": "^1.0.1",
     "vitest": "^3.2.4"
   },
   "dependencies": {

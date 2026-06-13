@@ -62,6 +62,54 @@ body {
   top: 1rem;
 }
 
+.pwa-install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
+  background: var(--primary);
+  color: #f8fafc;
+  box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.25);
+}
+
+.pwa-install-banner__text {
+  margin: 0;
+  flex: 1 1 12rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.pwa-install-banner__install {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  border: 2px solid #f8fafc;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.pwa-install-banner__dismiss {
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -1089,7 +1137,9 @@ tr.status--exceeds {
   #form-root,
   .btn,
   .research-export,
-  .references summary {
+  .references summary,
+  .no-print,
+  .pwa-install-banner {
     display: none;
   }
 

@@ -23,6 +23,7 @@ import { renderDisclaimer } from './ui/disclaimer.ts';
 import { renderBedsideResults } from './ui/resultsPanelBedside.ts';
 import { renderResultsPanel } from './ui/resultsPanel.ts';
 import { switchResearchTab } from './ui/researchExportPanel.ts';
+import { initPwa } from './pwa.ts';
 import './style.css';
 import './style-bedside.css';
 
@@ -361,3 +362,4 @@ app.addEventListener('click', (e) => {
 });
 
 renderApp();
+initPwa();

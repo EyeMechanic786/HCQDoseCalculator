@@ -16,6 +16,17 @@ The **original concept** for a point-of-care hydroxychloroquine dose calculator 
 
 Every push to `main` rebuilds and redeploys via GitHub Actions.
 
+## Install as an app (PWA)
+
+The site is a **Progressive Web App** — you can install it on a phone or tablet for quick clinic access without an app store:
+
+| Platform | How to install |
+|----------|----------------|
+| **Android / Chrome (desktop)** | Tap **Install** when the banner appears, or use the browser menu → *Install app* |
+| **iPhone / iPad (Safari)** | Tap **Share** → **Add to Home Screen** |
+
+Once installed, the calculator opens full-screen from your home screen and works offline for cached pages. Updates deploy automatically when you revisit the site.
+
 ## Two layouts
 
 Use the **Dashboard** or **Bedside** tabs in the header to compare designs:
