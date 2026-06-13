@@ -2,6 +2,12 @@ import { assessHcqDose, isValidInput } from './calc/hcqDose.ts';
 import { getScreeningGuidance } from './calc/screening.ts';
 import { ftInToCm, lbToKg } from './calc/units.ts';
 import { printSummary } from './print.ts';
+import {
+  handleAddToStudyLog,
+  handleClearStudyLog,
+  handleDownloadWorkbook,
+  handleExportCurrentCase,
+} from './export/researchActions.ts';
 import { renderStickyPrintBar } from './ui/printBar.ts';
 import { showPrintNotice } from './ui/printNotice.ts';
 import type { AppDesign, HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
@@ -107,6 +113,12 @@ function updatePrintBar(visible: boolean): void {
   bar.setAttribute('aria-hidden', String(!visible));
 }
 
+function getValidPatientInput(): PatientInput | null {
+  const partial = parsePatientInput(formState);
+  if (!partial || validateInput(partial) || !isValidInput(partial)) return null;
+  return partial;
+}
+
 function handlePrint(): void {
   if (!lastAssessment) {
     showPrintNotice('Enter patient data to generate a printable summary.', true);
@@ -114,6 +126,41 @@ function handlePrint(): void {
   }
   const result = printSummary(lastAssessment, lastScreening);
   showPrintNotice(result.message, !result.success);
+}
+
+async function handleResearchAction(action: string): Promise<void> {
+  readFormFromDom();
+  const patientInput = getValidPatientInput();
+
+  if (action === 'research-clear') {
+    const result = handleClearStudyLog();
+    showPrintNotice(result.message, !result.success);
+    return;
+  }
+
+  if (!patientInput) {
+    showPrintNotice('Enter valid patient data before exporting research records.', true);
+    return;
+  }
+
+  if (action === 'research-add') {
+    const result = handleAddToStudyLog(formState, patientInput, appDesign);
+    showPrintNotice(result.message, !result.success);
+    return;
+  }
+
+  if (action === 'research-export-current') {
+    showPrintNotice('Preparing Excel export…', false);
+    const result = await handleExportCurrentCase(formState, patientInput, appDesign);
+    showPrintNotice(result.message, !result.success);
+    return;
+  }
+
+  if (action === 'research-download') {
+    showPrintNotice('Preparing Excel workbook…', false);
+    const result = await handleDownloadWorkbook(formState, patientInput, appDesign, true);
+    showPrintNotice(result.message, !result.success);
+  }
 }
 
 function readFormFromDom(): void {
@@ -254,6 +301,13 @@ app.addEventListener('click', (e) => {
   if (target.closest('[data-action="print"]')) {
     e.preventDefault();
     handlePrint();
+    return;
+  }
+
+  const researchAction = target.closest('[data-action^="research-"]') as HTMLElement | null;
+  if (researchAction?.dataset.action) {
+    e.preventDefault();
+    void handleResearchAction(researchAction.dataset.action);
     return;
   }
 

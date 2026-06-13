@@ -1,5 +1,6 @@
 import { renderRiskFactorWarning } from './riskFactorWarning.ts';
 import { renderPrintButton } from './printBar.ts';
+import { renderResearchExportPanel } from './researchExportPanel.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import type { HcqAssessment } from '../types.ts';
 import type { ScreeningGuidance } from '../types.ts';
@@ -125,6 +126,8 @@ export function renderResultsPanel(
       <p class="tablet-note">${assessment.tabletNote}</p>
 
       ${screeningBlock}
+
+      ${renderResearchExportPanel(true)}
 
       <details class="references">
         <summary>References &amp; formulae</summary>

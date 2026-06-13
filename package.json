@@ -15,5 +15,8 @@
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
   }
 }

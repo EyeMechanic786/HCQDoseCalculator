@@ -460,6 +460,17 @@ body.design-bedside .site-footer {
   }
 }
 
+body.design-bedside .research-export {
+  margin-top: 1rem;
+  border-radius: 12px;
+}
+
+body.design-bedside .research-export__actions .btn,
+body.design-bedside .research-export__actions .btn--primary,
+body.design-bedside .research-export__actions .btn--secondary {
+  min-height: 48px;
+}
+
 @media print {
   body.design-bedside .design-tabs,
   body.design-bedside .bedside-advanced,
