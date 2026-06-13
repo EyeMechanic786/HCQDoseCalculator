@@ -53,6 +53,15 @@ body.design-bedside .disclaimer {
   text-align: left;
 }
 
+body.design-bedside .disclaimer__summary {
+  padding: 0.55rem 1rem;
+  color: var(--text-muted);
+}
+
+body.design-bedside .disclaimer__body {
+  padding: 0 1rem 0.75rem;
+}
+
 body.design-bedside .disclaimer a {
   color: var(--accent);
 }
@@ -435,6 +444,20 @@ body.design-bedside .site-header__inner {
 .bedside-screening__flag.is-routine {
   background: var(--success-bg);
   color: var(--success);
+}
+
+.bedside-screening__label {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+}
+
+.bedside-screening__note {
+  margin: 0 0 0.5rem;
+  line-height: 1.45;
 }
 
 .bedside-footnote {

@@ -26,7 +26,7 @@ export function renderBedsideResults(
   const screeningHtml = screening
     ? `
     <details class="bedside-screening">
-      <summary>Screening reminders (AAO)</summary>
+      <summary>Screening guidance (AAO / RCOphth)</summary>
       <p class="bedside-screening__flag ${
         !screening.riskFactorsComplete
           ? 'is-incomplete'
@@ -42,7 +42,10 @@ export function renderBedsideResults(
               : 'Routine screening schedule may apply.'
         }
       </p>
+      <h4 class="bedside-screening__label">AAO (US)</h4>
       <ul>${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}</ul>
+      <h4 class="bedside-screening__label">RCOphth (UK)</h4>
+      <p class="bedside-screening__note">${screening.rcophthNote}</p>
     </details>
   `
     : '';

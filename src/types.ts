@@ -89,5 +89,6 @@ export interface ScreeningGuidance {
   showRiskFactorWarning: boolean;
   riskFactorWarningMessage: string | null;
   recommendations: string[];
+  rcophthNote: string;
   riskNotes: string[];
 }

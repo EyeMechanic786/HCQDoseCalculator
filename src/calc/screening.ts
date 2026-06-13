@@ -7,6 +7,9 @@ import type {
 } from '../types.ts';
 import type { DoseStatus } from '../types.ts';
 
+const RCOHPTH_SCREENING_NOTE =
+  'Start HCQ screening only after five or more years of continuous usage, unless high-risk factors are noted by the referring healthcare professional.';
+
 const RISK_FACTOR_LABELS: Record<keyof ScreeningRiskFactors, string> = {
   renalDisease: 'Concurrent renal disease',
   tamoxifen: 'Concurrent tamoxifen',
@@ -112,6 +115,7 @@ export function getScreeningGuidance(
     showRiskFactorWarning,
     riskFactorWarningMessage,
     recommendations,
+    rcophthNote: RCOHPTH_SCREENING_NOTE,
     riskNotes,
   };
 }

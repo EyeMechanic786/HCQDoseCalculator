@@ -45,17 +45,24 @@ export function renderResultsPanel(
   const screeningBlock = screening
     ? `
     <section class="screening-block" aria-labelledby="screening-heading">
-      <h3 id="screening-heading">AAO screening guidance</h3>
+      <h3 id="screening-heading">Screening guidance</h3>
       ${
         !screening.riskFactorsComplete
           ? '<p class="screening-flag screening-flag--incomplete">Complete all screening risk factors (Yes/No) to finalise guidance.</p>'
           : screening.elevatedRisk
           ? '<p class="screening-flag screening-flag--elevated">Elevated screening risk — do not defer annual screening.</p>'
-          : '<p class="screening-flag screening-flag--routine">No major risk factors — annual screening may be deferred in first 5 years.</p>'
+          : '<p class="screening-flag screening-flag--routine">No major risk factors — AAO: annual screening may be deferred in first 5 years.</p>'
       }
-      <ul class="screening-list">
-        ${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}
-      </ul>
+      <div class="screening-guidance__section">
+        <h4 class="screening-guidance__label">AAO (US)</h4>
+        <ul class="screening-list">
+          ${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="screening-guidance__section">
+        <h4 class="screening-guidance__label">RCOphth (UK)</h4>
+        <p class="screening-guidance__note">${screening.rcophthNote}</p>
+      </div>
       ${
         screening.riskNotes.length
           ? `<ul class="risk-notes">${screening.riskNotes.map((n) => `<li>${n}</li>`).join('')}</ul>`

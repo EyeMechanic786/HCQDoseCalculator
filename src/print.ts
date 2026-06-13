@@ -66,7 +66,10 @@ export function buildPrintHtml(assessment: HcqAssessment, screening: ScreeningGu
     <tbody>${methods}</tbody>
   </table>
   <h2>Screening guidance</h2>
+  <h3>AAO (US)</h3>
   <ul>${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}</ul>
+  <h3>RCOphth (UK)</h3>
+  <p>${screening.rcophthNote}</p>
   ${screening.riskNotes.length ? `<h3>Risk notes</h3><ul>${screening.riskNotes.map((n) => `<li>${n}</li>`).join('')}</ul>` : ''}
   <p style="font-size:0.8rem;margin-top:2rem;">Formula version: AAO 2026 · NIH/NHLBI IBW · v1.1</p>
 </body>
