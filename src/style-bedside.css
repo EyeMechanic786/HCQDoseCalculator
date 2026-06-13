@@ -1,32 +1,12 @@
 /* Bedside layout — inspired by DoseChecker (Perlman / Mass Eye & Ear) */
 
 body.design-bedside {
-  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --bg: #eef2f6;
-  --surface: #ffffff;
-  --text: #1a2332;
-  --text-muted: #5c6b7a;
-  --primary: #003366;
-  --primary-light: #0a4d8c;
-  --accent: #0077b6;
-  --border: #c5d0db;
-  --success: #0d6b45;
-  --success-bg: #e6f4ed;
-  --danger: #b42318;
-  --danger-bg: #fdecea;
-  --caution-bg: #fff8e6;
-  --radius: 10px;
-  --shadow: 0 2px 12px rgba(0, 51, 102, 0.08);
-}
-
-body.design-bedside {
-  background: var(--bg);
   font-size: 17px;
 }
 
 body.design-bedside .site-header {
-  background: linear-gradient(135deg, #002244 0%, #004080 100%);
-  padding: 1.5rem 1rem 1rem;
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-light) 100%);
+  padding: 1rem 1rem 0.85rem;
   text-align: center;
 }
 
@@ -122,7 +102,7 @@ body.design-bedside .site-header__inner {
 
 .bedside-segment__btn {
   min-height: 48px;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   background: #fff;
   font-weight: 600;
@@ -163,7 +143,7 @@ body.design-bedside .site-header__inner {
   font-size: 1.25rem;
   font-weight: 600;
   padding: 0.5rem 0.75rem;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   width: 100%;
   max-width: 8rem;
@@ -309,7 +289,7 @@ body.design-bedside .site-header__inner {
 
 .bedside-compare__col {
   background: var(--surface);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   padding: 0.85rem;
 }
@@ -503,7 +483,7 @@ body.design-bedside .research-export__summary {
 
 body.design-bedside .research-export:not([open]) .research-export__summary {
   border-radius: 10px;
-  border-bottom: 2px solid #be185d;
+  border-bottom: 1px solid var(--primary-hover);
 }
 
 body.design-bedside .research-export__actions .btn,
