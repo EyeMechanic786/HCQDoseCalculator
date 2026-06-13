@@ -386,6 +386,22 @@ body.design-bedside .site-header__inner {
   color: #fff;
 }
 
+.bedside-print-top {
+  margin-bottom: 0.75rem;
+}
+
+.bedside-btn--print-top {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.bedside-btn--print-top:hover {
+  background: var(--primary-light);
+  color: #fff;
+}
+
 .bedside-screening {
   font-size: 0.85rem;
   background: var(--surface);
