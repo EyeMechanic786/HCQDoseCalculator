@@ -108,6 +108,38 @@ describe('somatotype edge cases', () => {
   });
 });
 
+describe('weekly regimen', () => {
+  it('uses lower of ABW and IBW weekly caps when obese', () => {
+    const result = assessHcqDose(
+      { sex: 'female', heightCm: 160, weightKg: 95, dailyDoseMg: 400 },
+      'nhlbi',
+    );
+    const w = result.weeklyRegimen;
+    expect(w.maxWeeklyAbwMg).toBeGreaterThan(w.maxWeeklyIbwMg);
+    expect(w.governingMethod).toBe('ibw');
+    expect(w.governingWeeklyMg).toBe(w.maxWeeklyIbwMg);
+    expect(w.currentExceedsSafe).toBe(true);
+  });
+
+  it('flags current weekly dose when above governing cap', () => {
+    const result = assessHcqDose(
+      { sex: 'female', heightCm: 162.6, weightKg: 72.7, dailyDoseMg: 400 },
+      'nhlbi',
+    );
+    expect(result.weeklyRegimen.currentWeeklyMg).toBe(2800);
+    expect(result.weeklyRegimen.currentExceedsSafe).toBe(true);
+  });
+
+  it('suggests a 200/400 mg weekly mix under the cap', () => {
+    const result = assessHcqDose(
+      { sex: 'female', heightCm: 162.6, weightKg: 72.7, dailyDoseMg: 200 },
+      'nhlbi',
+    );
+    expect(result.weeklyRegimen.daysAt400 + result.weeklyRegimen.daysAt200).toBeLessThanOrEqual(7);
+    expect(result.weeklyRegimen.scheduleSummary.length).toBeGreaterThan(0);
+  });
+});
+
 describe('dose within AAO guideline', () => {
   it('passes for 300 mg/day on 80 kg patient', () => {
     const result = assessHcqDose(

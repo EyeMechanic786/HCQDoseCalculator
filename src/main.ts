@@ -2,17 +2,26 @@ import { assessHcqDose, isValidInput } from './calc/hcqDose.ts';
 import { getScreeningGuidance } from './calc/screening.ts';
 import { ftInToCm, lbToKg } from './calc/units.ts';
 import { printSummary } from './print.ts';
-import type { HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
+import type { AppDesign, HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
+import { renderBedsideForm } from './ui/calculatorFormBedside.ts';
 import {
   defaultFormState,
   renderCalculatorForm,
   type FormState,
 } from './ui/calculatorForm.ts';
+import { loadDesign, renderDesignSwitcher, saveDesign } from './ui/design.ts';
 import { renderDisclaimer } from './ui/disclaimer.ts';
+import { renderBedsideResults } from './ui/resultsPanelBedside.ts';
 import { renderResultsPanel } from './ui/resultsPanel.ts';
 import './style.css';
+import './style-bedside.css';
+
+const appRoot = document.getElementById('app');
+if (!appRoot) throw new Error('App root element not found');
+const app = appRoot;
 
 let formState: FormState = { ...defaultFormState };
+let appDesign: AppDesign = loadDesign();
 let lastAssessment: HcqAssessment | null = null;
 let lastScreening = getScreeningGuidance(null, parseRiskFactors(formState));
 
@@ -50,6 +59,11 @@ function validateInput(input: Partial<PatientInput>): string | null {
   return null;
 }
 
+function applyDesignClass(): void {
+  document.body.classList.remove('design-dashboard', 'design-bedside');
+  document.body.classList.add(appDesign === 'bedside' ? 'design-bedside' : 'design-dashboard');
+}
+
 function compute(): void {
   const partial = parsePatientInput(formState);
   if (!partial) return;
@@ -58,10 +72,13 @@ function compute(): void {
   const resultsEl = document.getElementById('results-root');
   if (!resultsEl) return;
 
+  const renderResults =
+    appDesign === 'bedside' ? renderBedsideResults : renderResultsPanel;
+
   if (invalidMessage) {
     lastAssessment = null;
     lastScreening = getScreeningGuidance(null, parseRiskFactors(formState));
-    resultsEl.innerHTML = renderResultsPanel(null, lastScreening, invalidMessage);
+    resultsEl.innerHTML = renderResults(null, lastScreening, invalidMessage);
     return;
   }
 
@@ -69,7 +86,7 @@ function compute(): void {
 
   lastAssessment = assessHcqDose(partial, formState.ibwAlgorithm);
   lastScreening = getScreeningGuidance(lastAssessment, parseRiskFactors(formState));
-  resultsEl.innerHTML = renderResultsPanel(lastAssessment, lastScreening, null);
+  resultsEl.innerHTML = renderResults(lastAssessment, lastScreening, null);
   bindPrintButton();
 }
 
@@ -80,13 +97,15 @@ function bindPrintButton(): void {
 }
 
 function readFormFromDom(): void {
-  const form = document.getElementById('calc-form');
-  if (!form) return;
-
-  const sex = (form.querySelector('input[name="sex"]:checked') as HTMLInputElement)?.value as
-    | 'female'
-    | 'male';
-  if (sex) formState.sex = sex;
+  const bedsideSex = document.getElementById('bedside-sex') as HTMLInputElement | null;
+  if (bedsideSex?.value) {
+    formState.sex = bedsideSex.value as FormState['sex'];
+  } else {
+    const sex = (document.querySelector('input[name="sex"]:checked') as HTMLInputElement)?.value as
+      | 'female'
+      | 'male';
+    if (sex) formState.sex = sex;
+  }
 
   formState.heightCm =
     (document.getElementById('height-cm') as HTMLInputElement)?.value ?? formState.heightCm;
@@ -108,26 +127,44 @@ function readFormFromDom(): void {
     (document.getElementById('age-start') as HTMLInputElement)?.checked ?? false;
 }
 
+function switchDesign(design: AppDesign): void {
+  if (design === appDesign) return;
+  readFormFromDom();
+  appDesign = design;
+  saveDesign(design);
+  renderApp();
+}
+
 function renderApp(): void {
-  const app = document.getElementById('app');
-  if (!app) return;
+  applyDesignClass();
+
+  const formHtml =
+    appDesign === 'bedside'
+      ? renderBedsideForm(formState)
+      : renderCalculatorForm(formState);
+
+  const tagline =
+    appDesign === 'bedside'
+      ? 'Point-of-care HCQ dosing · compare actual vs ideal body weight'
+      : 'Hydroxychloroquine dosing &amp; screening guidance for eye care professionals';
 
   app.innerHTML = `
     <header class="site-header">
       <div class="site-header__inner">
         <h1>HCQ Dose Calculator</h1>
-        <p class="tagline">Hydroxychloroquine dosing &amp; screening guidance for eye care professionals</p>
+        <p class="tagline">${tagline}</p>
+        ${renderDesignSwitcher(appDesign)}
       </div>
     </header>
     ${renderDisclaimer()}
     <main id="main" class="main">
       <div class="layout">
-        <div id="form-root">${renderCalculatorForm(formState)}</div>
-        <div id="results-root">${renderResultsPanel(null, lastScreening, null)}</div>
+        <div id="form-root">${formHtml}</div>
+        <div id="results-root"></div>
       </div>
     </main>
     <footer class="site-footer">
-      <p>Formula version: AAO 2026 · NIH/NHLBI IBW · v1.0</p>
+      <p>Formula version: AAO 2026 · NIH/NHLBI IBW · v1.1</p>
     </footer>
   `;
 
@@ -151,6 +188,14 @@ function bindFormEvents(): void {
 
   formRoot.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+
+    const sex = target.dataset.sex as FormState['sex'] | undefined;
+    if (sex) {
+      formState.sex = sex;
+      renderApp();
+      return;
+    }
+
     const heightUnit = target.dataset.heightUnit as FormState['heightUnit'] | undefined;
     const weightUnit = target.dataset.weightUnit as FormState['weightUnit'] | undefined;
 
@@ -165,5 +210,12 @@ function bindFormEvents(): void {
     }
   });
 }
+
+app.addEventListener('click', (e) => {
+  const tab = (e.target as HTMLElement).closest('[data-design]') as HTMLElement | null;
+  if (!tab?.dataset.design) return;
+  e.preventDefault();
+  switchDesign(tab.dataset.design as AppDesign);
+});
 
 renderApp();

@@ -1,3 +1,4 @@
+import { computeWeeklyRegimen } from './weeklyDose.ts';
 import { ibwKg } from './ibw.ts';
 import { round } from './units.ts';
 import type {
@@ -120,6 +121,7 @@ export function assessHcqDose(
   }
 
   const hybridMax = dosingWeightKg * HYBRID_MG_PER_KG;
+  const weeklyRegimen = computeWeeklyRegimen(abwKg, ibw, dailyDoseMg, patientBmi);
 
   return {
     abwKg: round(abwKg, 1),
@@ -136,6 +138,7 @@ export function assessHcqDose(
     cap400Message,
     tabletNote: tabletNote(Math.min(aao.maxDailyDoseMg, hybridMax)),
     narrative: buildNarrative(methods.filter((m) => m.id !== 'cap400'), dailyDoseMg),
+    weeklyRegimen,
   };
 }
 

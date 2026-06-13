@@ -5,6 +5,8 @@ export type WeightUnit = 'kg' | 'lb';
 
 export type IbwAlgorithm = 'nhlbi' | 'devine';
 
+export type AppDesign = 'dashboard' | 'bedside';
+
 export type DoseStatus = 'within' | 'exceeds' | 'caution';
 
 export interface PatientInput {
@@ -25,6 +27,21 @@ export interface MethodResult {
   summary: string;
 }
 
+export interface WeeklyRegimen {
+  maxWeeklyAbwMg: number;
+  maxWeeklyIbwMg: number;
+  governingWeeklyMg: number;
+  governingMethod: 'abw' | 'ibw';
+  governingMethodLabel: string;
+  maxDailyEquivalentMg: number;
+  daysAt400: number;
+  daysAt200: number;
+  offDays: number;
+  scheduleSummary: string;
+  currentWeeklyMg: number;
+  currentExceedsSafe: boolean;
+}
+
 export interface HcqAssessment {
   abwKg: number;
   ibwKg: number;
@@ -40,6 +57,7 @@ export interface HcqAssessment {
   cap400Message: string | null;
   tabletNote: string;
   narrative: string;
+  weeklyRegimen: WeeklyRegimen;
 }
 
 export interface ScreeningRiskFactors {
