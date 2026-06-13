@@ -30,7 +30,12 @@ export function printSummary(assessment: HcqAssessment, screening: ScreeningGuid
 <body>
   <h1>HCQ Dose Assessment Summary</h1>
   <p>Generated ${new Date().toLocaleString()}</p>
-  <div class="disclaimer"><strong>Clinician use only.</strong> Decision support — not medical advice.</div>
+  <div class="disclaimer">
+    <p><strong>For clinician use only.</strong> Decision support — not medical advice. Not FDA cleared.
+    Does not replace prescribing decisions or AAO screening protocols.</p>
+    <p><strong>Original concept credit:</strong> Dr Elliot Perlman — DoseChecker (iOS, Massachusetts Eye and Ear).
+    Perlman et al., JAMA Ophthalmology 2018. This summary is from an independent web tool inspired by that work.</p>
+  </div>
   <p><strong>Daily dose:</strong> ${assessment.dailyDoseMg} mg</p>
   <p><strong>ABW:</strong> ${assessment.abwKg} kg | <strong>IBW:</strong> ${assessment.ibwKg} kg | <strong>BMI:</strong> ${assessment.bmi}</p>
   <p>${assessment.narrative}</p>
@@ -41,7 +46,7 @@ export function printSummary(assessment: HcqAssessment, screening: ScreeningGuid
   <h2>Screening guidance</h2>
   <ul>${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}</ul>
   ${screening.riskNotes.length ? `<h3>Risk notes</h3><ul>${screening.riskNotes.map((n) => `<li>${n}</li>`).join('')}</ul>` : ''}
-  <p style="font-size:0.8rem;margin-top:2rem;">Formula version: AAO 2026 · NIH/NHLBI IBW · v1.0</p>
+  <p style="font-size:0.8rem;margin-top:2rem;">Formula version: AAO 2026 · NIH/NHLBI IBW · v1.1</p>
   <script>window.onload = () => { window.print(); };</script>
 </body>
 </html>`);

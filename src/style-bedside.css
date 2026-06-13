@@ -50,7 +50,11 @@ body.design-bedside .disclaimer {
   border-bottom: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 0.82rem;
-  text-align: center;
+  text-align: left;
+}
+
+body.design-bedside .disclaimer a {
+  color: var(--accent);
 }
 
 body.design-bedside .main {

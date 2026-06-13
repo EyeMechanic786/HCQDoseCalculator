@@ -164,7 +164,11 @@ function renderApp(): void {
       </div>
     </main>
     <footer class="site-footer">
-      <p>Formula version: AAO 2026 · NIH/NHLBI IBW · v1.1</p>
+      <p>Formula version: AAO 2026 · NIH/NHLBI IBW · Browning lesser-of-weight · v1.1</p>
+      <p class="site-footer__credit">
+        Concept inspired by Dr Elliot Perlman&apos;s
+        <a href="https://apps.apple.com/us/app/dosechecker/id1233772258" target="_blank" rel="noopener noreferrer">DoseChecker</a> (iOS).
+      </p>
     </footer>
   `;
 

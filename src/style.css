@@ -148,7 +148,27 @@ body {
   background: var(--caution-bg);
   border-bottom: 2px solid var(--caution);
   color: var(--caution);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+}
+
+.disclaimer p {
+  margin: 0;
+}
+
+.disclaimer p + p {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(146, 64, 14, 0.25);
+}
+
+.disclaimer a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.disclaimer a:hover {
+  text-decoration: none;
 }
 
 .main {
@@ -486,6 +506,15 @@ tr.status--exceeds {
   font-size: 0.8rem;
   color: var(--text-muted);
   text-align: center;
+}
+
+.site-footer__credit {
+  margin: 0.35rem 0 0;
+}
+
+.site-footer a {
+  color: var(--primary);
+  font-weight: 600;
 }
 
 @media print {

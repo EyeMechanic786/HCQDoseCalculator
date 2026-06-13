@@ -2,7 +2,13 @@
 
 A browser-based clinical decision-support tool for **ophthalmology and optometry professionals** to assess hydroxychloroquine (HCQ) daily dosing against retinal toxicity risk thresholds and AAO screening guidance.
 
-**For clinician use only.** This app supports clinical judgment; it does not replace prescribing decisions, rheumatology consultation, or formal AAO screening protocols.
+**For clinician use only.** This app supports clinical judgment; it does not replace prescribing decisions, rheumatology consultation, or formal AAO screening protocols. It is **not FDA cleared** and is not a substitute for professional medical judgment.
+
+## Acknowledgement
+
+The **original concept** for a point-of-care hydroxychloroquine dose calculator — comparing actual and ideal body weight to guide safer prescribing — is credited to **Dr Elliot Perlman**, who developed [**DoseChecker**](https://apps.apple.com/us/app/dosechecker/id1233772258) for iOS (Massachusetts Eye and Ear). See [Perlman et al., *JAMA Ophthalmology* 2018](https://jamanetwork.com/journals/jamaophthalmology/fullarticle/2666807).
+
+**HCQ Dose Calculator** is an **independent web project** inspired by that work. It is not affiliated with Dr Perlman, Massachusetts Eye and Ear, or Apple, and is not the DoseChecker app.
 
 ## Live app
 
@@ -149,6 +155,8 @@ tests/           Vitest unit tests for clinical math
 ## Disclaimer
 
 This software is provided for educational and clinical decision-support purposes only. It is **not FDA cleared**, not a medical device, and not a substitute for professional medical judgment. Always verify dosing with the prescribing physician and follow current institutional protocols.
+
+See **Acknowledgement** above for credit to Dr Elliot Perlman's DoseChecker (iOS), which inspired this project.
 
 Formula version: **AAO 2026 · NIH/NHLBI IBW · Browning lesser-of-weight · v1.1**
 
