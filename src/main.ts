@@ -131,6 +131,8 @@ function readFormFromDom(): void {
   formState.macularPathology = readYesNo('macularPathology');
   formState.ageAtStartOver60 = readYesNo('ageAtStartOver60');
   formState.hcqFiveYearsOrMore = readYesNo('hcqFiveYearsOrMore');
+  const screeningDetails = document.querySelector('.screening-risks') as HTMLDetailsElement | null;
+  if (screeningDetails) formState.screeningRisksOpen = screeningDetails.open;
 }
 
 function switchDesign(design: AppDesign): void {
@@ -195,6 +197,17 @@ function bindFormEvents(): void {
     readFormFromDom();
     compute();
   });
+
+  formRoot.addEventListener(
+    'toggle',
+    (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('screening-risks')) {
+        formState.screeningRisksOpen = (target as HTMLDetailsElement).open;
+      }
+    },
+    true,
+  );
 
   formRoot.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;

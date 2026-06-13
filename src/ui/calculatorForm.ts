@@ -16,6 +16,7 @@ export interface FormState {
   macularPathology: YesNo;
   ageAtStartOver60: YesNo;
   hcqFiveYearsOrMore: YesNo;
+  screeningRisksOpen: boolean;
 }
 
 export const defaultFormState: FormState = {
@@ -33,6 +34,7 @@ export const defaultFormState: FormState = {
   macularPathology: '',
   ageAtStartOver60: '',
   hcqFiveYearsOrMore: '',
+  screeningRisksOpen: false,
 };
 
 export function renderCalculatorForm(state: FormState): string {

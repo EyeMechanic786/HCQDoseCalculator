@@ -8,6 +8,14 @@ type RiskFactorKey =
   | 'ageAtStartOver60'
   | 'hcqFiveYearsOrMore';
 
+const RISK_KEYS: RiskFactorKey[] = [
+  'renalDisease',
+  'tamoxifen',
+  'macularPathology',
+  'ageAtStartOver60',
+  'hcqFiveYearsOrMore',
+];
+
 function yesNoRow(name: RiskFactorKey, label: string, value: YesNo): string {
   return `
     <fieldset class="risk-yesno">
@@ -26,16 +34,35 @@ function yesNoRow(name: RiskFactorKey, label: string, value: YesNo): string {
   `;
 }
 
+function summaryStatus(state: FormState): { text: string; hintClass: string } {
+  const answered = RISK_KEYS.filter((k) => state[k] === 'yes' || state[k] === 'no').length;
+  const yesCount = RISK_KEYS.filter((k) => state[k] === 'yes').length;
+  if (answered < RISK_KEYS.length) {
+    return { text: `${answered}/${RISK_KEYS.length} answered`, hintClass: 'screening-risks__hint--partial' };
+  }
+  if (yesCount > 0) {
+    return { text: `${yesCount} identified`, hintClass: 'screening-risks__hint--alert' };
+  }
+  return { text: 'Complete', hintClass: 'screening-risks__hint--complete' };
+}
+
 export function renderScreeningRiskFactors(state: FormState): string {
+  const { text: hint, hintClass } = summaryStatus(state);
+
   return `
-    <section class="screening-risks" aria-labelledby="screening-risks-heading">
-      <h3 id="screening-risks-heading" class="screening-risks__heading">Screening risk factors</h3>
-      <p class="screening-risks__intro">Select <strong>Yes</strong> or <strong>No</strong> for each item.</p>
-      ${yesNoRow('renalDisease', 'Concurrent renal disease', state.renalDisease)}
-      ${yesNoRow('tamoxifen', 'Concurrent tamoxifen', state.tamoxifen)}
-      ${yesNoRow('macularPathology', 'Macular pathology', state.macularPathology)}
-      ${yesNoRow('ageAtStartOver60', 'HCQ started after age 60', state.ageAtStartOver60)}
-      ${yesNoRow('hcqFiveYearsOrMore', 'On HCQ ≥5 years', state.hcqFiveYearsOrMore)}
-    </section>
+    <details class="screening-risks" ${state.screeningRisksOpen ? 'open' : ''}>
+      <summary class="screening-risks__summary">
+        <span class="screening-risks__title">Screening risk factors</span>
+        <span class="screening-risks__hint ${hintClass}">${hint}</span>
+      </summary>
+      <div class="screening-risks__body">
+        <p class="screening-risks__intro">Select <strong>Yes</strong> or <strong>No</strong> for each item.</p>
+        ${yesNoRow('renalDisease', 'Concurrent renal disease', state.renalDisease)}
+        ${yesNoRow('tamoxifen', 'Concurrent tamoxifen', state.tamoxifen)}
+        ${yesNoRow('macularPathology', 'Macular pathology', state.macularPathology)}
+        ${yesNoRow('ageAtStartOver60', 'HCQ started after age 60', state.ageAtStartOver60)}
+        ${yesNoRow('hcqFiveYearsOrMore', 'On HCQ ≥5 years', state.hcqFiveYearsOrMore)}
+      </div>
+    </details>
   `;
 }

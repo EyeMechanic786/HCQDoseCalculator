@@ -190,14 +190,17 @@ body.design-bedside .site-header__inner {
 
 .screening-risks {
   margin-top: 1.25rem;
-  padding: 1rem;
   border: 2px solid var(--accent);
   border-radius: var(--radius);
   background: #f8fbfd;
 }
 
-.screening-risks__heading {
+.screening-risks__summary {
   color: var(--primary);
+}
+
+.screening-risks__body {
+  padding-bottom: 1rem;
 }
 
 .bedside-advanced summary {
