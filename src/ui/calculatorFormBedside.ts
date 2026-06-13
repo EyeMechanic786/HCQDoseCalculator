@@ -1,4 +1,5 @@
 import type { FormState } from './calculatorForm.ts';
+import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 
 /** DoseChecker-inspired compact input layout — height, weight, dose first. */
 export function renderBedsideForm(state: FormState): string {
@@ -53,22 +54,16 @@ export function renderBedsideForm(state: FormState): string {
           </label>
         </div>
 
+        ${renderScreeningRiskFactors(state)}
+
         <details class="bedside-advanced">
-          <summary>Advanced options</summary>
+          <summary>IBW formula</summary>
           <label class="bedside-field">
-            <span class="bedside-field__label">IBW formula</span>
             <select id="ibw-algorithm" class="bedside-select">
               <option value="nhlbi" ${state.ibwAlgorithm === 'nhlbi' ? 'selected' : ''}>NIH / NHLBI</option>
               <option value="devine" ${state.ibwAlgorithm === 'devine' ? 'selected' : ''}>Devine</option>
             </select>
           </label>
-          <label class="bedside-field">
-            <span class="bedside-field__label">Years on HCQ</span>
-            <input type="number" id="duration-years" class="bedside-input" min="0" max="80" step="0.5" value="${state.durationYears}" placeholder="Optional" />
-          </label>
-          <label class="bedside-check"><input type="checkbox" id="renal-disease" ${state.renalDisease ? 'checked' : ''} /> Renal disease</label>
-          <label class="bedside-check"><input type="checkbox" id="tamoxifen" ${state.tamoxifen ? 'checked' : ''} /> Tamoxifen</label>
-          <label class="bedside-check"><input type="checkbox" id="age-start" ${state.ageAtStartOver60 ? 'checked' : ''} /> Started after age 60</label>
         </details>
       </form>
     </section>

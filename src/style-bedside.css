@@ -188,6 +188,18 @@ body.design-bedside .site-header__inner {
   font-size: 0.9rem;
 }
 
+.screening-risks {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: #f8fbfd;
+}
+
+.screening-risks__heading {
+  color: var(--primary);
+}
+
 .bedside-advanced summary {
   font-weight: 600;
   color: var(--accent);
@@ -389,6 +401,11 @@ body.design-bedside .site-header__inner {
   padding: 0.5rem;
   border-radius: 6px;
   margin: 0.5rem 0;
+}
+
+.bedside-screening__flag.is-incomplete {
+  background: var(--caution-bg);
+  color: var(--caution);
 }
 
 .bedside-screening__flag.is-elevated {

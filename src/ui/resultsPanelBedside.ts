@@ -1,3 +1,4 @@
+import { renderRiskFactorWarning } from './riskFactorWarning.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import { formatNumber, kgToLb } from '../calc/units.ts';
 import type { HcqAssessment, ScreeningGuidance } from '../types.ts';
@@ -25,8 +26,20 @@ export function renderBedsideResults(
     ? `
     <details class="bedside-screening">
       <summary>Screening reminders (AAO)</summary>
-      <p class="bedside-screening__flag ${screening.elevatedRisk ? 'is-elevated' : 'is-routine'}">
-        ${screening.elevatedRisk ? 'Elevated risk — annual screening advised.' : 'Routine screening schedule may apply.'}
+      <p class="bedside-screening__flag ${
+        !screening.riskFactorsComplete
+          ? 'is-incomplete'
+          : screening.elevatedRisk
+            ? 'is-elevated'
+            : 'is-routine'
+      }">
+        ${
+          !screening.riskFactorsComplete
+            ? 'Complete all screening risk factors (Yes/No).'
+            : screening.elevatedRisk
+              ? 'Elevated risk — annual screening advised.'
+              : 'Routine screening schedule may apply.'
+        }
       </p>
       <ul>${screening.recommendations.map((r) => `<li>${r}</li>`).join('')}</ul>
     </details>
@@ -51,6 +64,8 @@ export function renderBedsideResults(
           (${w.currentWeeklyMg} mg/week)
         </p>
       </div>
+
+      ${renderRiskFactorWarning(screening)}
 
       <div class="bedside-compare">
         <article class="bedside-compare__col ${w.governingMethod === 'abw' ? 'is-governing' : ''}">

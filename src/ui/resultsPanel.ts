@@ -1,3 +1,4 @@
+import { renderRiskFactorWarning } from './riskFactorWarning.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import type { HcqAssessment } from '../types.ts';
 import type { ScreeningGuidance } from '../types.ts';
@@ -45,7 +46,9 @@ export function renderResultsPanel(
     <section class="screening-block" aria-labelledby="screening-heading">
       <h3 id="screening-heading">AAO screening guidance</h3>
       ${
-        screening.elevatedRisk
+        !screening.riskFactorsComplete
+          ? '<p class="screening-flag screening-flag--incomplete">Complete all screening risk factors (Yes/No) to finalise guidance.</p>'
+          : screening.elevatedRisk
           ? '<p class="screening-flag screening-flag--elevated">Elevated screening risk — do not defer annual screening.</p>'
           : '<p class="screening-flag screening-flag--routine">No major risk factors — annual screening may be deferred in first 5 years.</p>'
       }
@@ -69,6 +72,8 @@ export function renderResultsPanel(
       </div>
 
       <p class="narrative">${assessment.narrative}</p>
+
+      ${renderRiskFactorWarning(screening)}
 
       ${
         assessment.cap400Message

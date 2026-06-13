@@ -26,13 +26,20 @@ let lastAssessment: HcqAssessment | null = null;
 let lastScreening = getScreeningGuidance(null, parseRiskFactors(formState));
 
 function parseRiskFactors(state: FormState): ScreeningRiskFactors {
-  const duration = state.durationYears.trim();
   return {
-    durationYears: duration === '' ? null : Number(duration),
     renalDisease: state.renalDisease,
     tamoxifen: state.tamoxifen,
+    macularPathology: state.macularPathology,
     ageAtStartOver60: state.ageAtStartOver60,
+    hcqFiveYearsOrMore: state.hcqFiveYearsOrMore,
   };
+}
+
+function readYesNo(name: string): FormState['renalDisease'] {
+  const selected = document.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement | null;
+  const value = selected?.value;
+  if (value === 'yes' || value === 'no') return value;
+  return '';
 }
 
 function parsePatientInput(state: FormState): Partial<PatientInput> | null {
@@ -119,12 +126,11 @@ function readFormFromDom(): void {
   formState.ibwAlgorithm = (
     (document.getElementById('ibw-algorithm') as HTMLSelectElement)?.value ?? 'nhlbi'
   ) as FormState['ibwAlgorithm'];
-  formState.durationYears =
-    (document.getElementById('duration-years') as HTMLInputElement)?.value ?? '';
-  formState.renalDisease = (document.getElementById('renal-disease') as HTMLInputElement)?.checked ?? false;
-  formState.tamoxifen = (document.getElementById('tamoxifen') as HTMLInputElement)?.checked ?? false;
-  formState.ageAtStartOver60 =
-    (document.getElementById('age-start') as HTMLInputElement)?.checked ?? false;
+  formState.renalDisease = readYesNo('renalDisease');
+  formState.tamoxifen = readYesNo('tamoxifen');
+  formState.macularPathology = readYesNo('macularPathology');
+  formState.ageAtStartOver60 = readYesNo('ageAtStartOver60');
+  formState.hcqFiveYearsOrMore = readYesNo('hcqFiveYearsOrMore');
 }
 
 function switchDesign(design: AppDesign): void {

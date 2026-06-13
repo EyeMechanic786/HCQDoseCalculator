@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ibwDevineKg, ibwKg, ibwNhlbiLb } from '../src/calc/ibw.ts';
 import { assessHcqDose, AAO_MG_PER_KG, IBW_MG_PER_KG } from '../src/calc/hcqDose.ts';
+import { getScreeningGuidance } from '../src/calc/screening.ts';
 import {
   cmToFtIn,
   ftInToCm,
@@ -149,5 +150,36 @@ describe('dose within AAO guideline', () => {
     const aao = result.methods.find((m) => m.id === 'aao')!;
     expect(aao.status).toBe('within');
     expect(result.mgPerKgAbw).toBe(3.75);
+  });
+});
+
+describe('screening risk factors', () => {
+  it('flags elevated risk when macular pathology is yes', () => {
+    const assessment = assessHcqDose(
+      { sex: 'female', heightCm: 180, weightKg: 80, dailyDoseMg: 300 },
+      'nhlbi',
+    );
+    const guidance = getScreeningGuidance(assessment, {
+      renalDisease: 'no',
+      tamoxifen: 'no',
+      macularPathology: 'yes',
+      ageAtStartOver60: 'no',
+      hcqFiveYearsOrMore: 'no',
+    });
+    expect(guidance.elevatedRisk).toBe(true);
+    expect(guidance.showRiskFactorWarning).toBe(true);
+    expect(guidance.identifiedRiskFactors.some((r) => r.id === 'macularPathology')).toBe(true);
+  });
+
+  it('requires all yes/no answers before risk assessment is complete', () => {
+    const guidance = getScreeningGuidance(null, {
+      renalDisease: 'no',
+      tamoxifen: '',
+      macularPathology: 'no',
+      ageAtStartOver60: 'no',
+      hcqFiveYearsOrMore: 'no',
+    });
+    expect(guidance.riskFactorsComplete).toBe(false);
+    expect(guidance.showRiskFactorWarning).toBe(false);
   });
 });

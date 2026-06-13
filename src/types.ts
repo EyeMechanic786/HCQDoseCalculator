@@ -9,6 +9,9 @@ export type AppDesign = 'dashboard' | 'bedside';
 
 export type DoseStatus = 'within' | 'exceeds' | 'caution';
 
+/** Explicit clinician response required for each screening risk factor. */
+export type YesNo = '' | 'yes' | 'no';
+
 export interface PatientInput {
   sex: Sex;
   heightCm: number;
@@ -61,10 +64,16 @@ export interface HcqAssessment {
 }
 
 export interface ScreeningRiskFactors {
-  durationYears: number | null;
-  renalDisease: boolean;
-  tamoxifen: boolean;
-  ageAtStartOver60: boolean;
+  renalDisease: YesNo;
+  tamoxifen: YesNo;
+  macularPathology: YesNo;
+  ageAtStartOver60: YesNo;
+  hcqFiveYearsOrMore: YesNo;
+}
+
+export interface IdentifiedRiskFactor {
+  id: string;
+  label: string;
 }
 
 export interface ScreeningGuidance {
@@ -72,6 +81,10 @@ export interface ScreeningGuidance {
   annualScreening: boolean;
   deferFirstFiveYears: boolean;
   elevatedRisk: boolean;
+  riskFactorsComplete: boolean;
+  identifiedRiskFactors: IdentifiedRiskFactor[];
+  showRiskFactorWarning: boolean;
+  riskFactorWarningMessage: string | null;
   recommendations: string[];
   riskNotes: string[];
 }

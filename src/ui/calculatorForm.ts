@@ -1,4 +1,5 @@
-import type { HeightUnit, IbwAlgorithm, Sex, WeightUnit } from '../types.ts';
+import type { HeightUnit, IbwAlgorithm, Sex, WeightUnit, YesNo } from '../types.ts';
+import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 
 export interface FormState {
   sex: Sex;
@@ -10,10 +11,11 @@ export interface FormState {
   weight: string;
   dailyDoseMg: string;
   ibwAlgorithm: IbwAlgorithm;
-  durationYears: string;
-  renalDisease: boolean;
-  tamoxifen: boolean;
-  ageAtStartOver60: boolean;
+  renalDisease: YesNo;
+  tamoxifen: YesNo;
+  macularPathology: YesNo;
+  ageAtStartOver60: YesNo;
+  hcqFiveYearsOrMore: YesNo;
 }
 
 export const defaultFormState: FormState = {
@@ -26,10 +28,11 @@ export const defaultFormState: FormState = {
   weight: '73',
   dailyDoseMg: '400',
   ibwAlgorithm: 'nhlbi',
-  durationYears: '',
-  renalDisease: false,
-  tamoxifen: false,
-  ageAtStartOver60: false,
+  renalDisease: '',
+  tamoxifen: '',
+  macularPathology: '',
+  ageAtStartOver60: '',
+  hcqFiveYearsOrMore: '',
 };
 
 export function renderCalculatorForm(state: FormState): string {
@@ -113,25 +116,7 @@ export function renderCalculatorForm(state: FormState): string {
           </select>
         </label>
 
-        <details class="screening-inputs">
-          <summary>Screening risk factors (optional)</summary>
-          <label class="field">
-            <span class="field__label">Years on HCQ</span>
-            <input type="number" id="duration-years" name="durationYears" min="0" max="80" step="0.5" value="${state.durationYears}" placeholder="e.g. 3" inputmode="decimal" />
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="renal-disease" name="renalDisease" ${state.renalDisease ? 'checked' : ''} />
-            Concurrent renal disease
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="tamoxifen" name="tamoxifen" ${state.tamoxifen ? 'checked' : ''} />
-            Concurrent tamoxifen
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="age-start" name="ageAtStartOver60" ${state.ageAtStartOver60 ? 'checked' : ''} />
-            HCQ started after age 60
-          </label>
-        </details>
+        ${renderScreeningRiskFactors(state)}
       </form>
     </section>
   `;

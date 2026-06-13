@@ -1,32 +1,70 @@
-import type { HcqAssessment, ScreeningGuidance, ScreeningRiskFactors } from '../types.ts';
+import type {
+  HcqAssessment,
+  IdentifiedRiskFactor,
+  ScreeningGuidance,
+  ScreeningRiskFactors,
+  YesNo,
+} from '../types.ts';
 import type { DoseStatus } from '../types.ts';
+
+const RISK_FACTOR_LABELS: Record<keyof ScreeningRiskFactors, string> = {
+  renalDisease: 'Concurrent renal disease',
+  tamoxifen: 'Concurrent tamoxifen',
+  macularPathology: 'Macular pathology',
+  ageAtStartOver60: 'HCQ started after age 60',
+  hcqFiveYearsOrMore: 'On HCQ ≥5 years',
+};
+
+function isYes(value: YesNo): boolean {
+  return value === 'yes';
+}
+
+export function riskFactorsComplete(risks: ScreeningRiskFactors): boolean {
+  return (Object.keys(RISK_FACTOR_LABELS) as (keyof ScreeningRiskFactors)[]).every(
+    (key) => risks[key] === 'yes' || risks[key] === 'no',
+  );
+}
+
+export function getIdentifiedRiskFactors(risks: ScreeningRiskFactors): IdentifiedRiskFactor[] {
+  return (Object.keys(RISK_FACTOR_LABELS) as (keyof ScreeningRiskFactors)[])
+    .filter((key) => isYes(risks[key]))
+    .map((key) => ({ id: key, label: RISK_FACTOR_LABELS[key] }));
+}
 
 export function getScreeningGuidance(
   assessment: HcqAssessment | null,
   risks: ScreeningRiskFactors,
 ): ScreeningGuidance {
+  const complete = riskFactorsComplete(risks);
+  const identifiedRiskFactors = getIdentifiedRiskFactors(risks);
+  const doseElevated =
+    assessment !== null &&
+    assessment.methods.some((m) => m.status === 'exceeds' || m.status === 'caution');
+
   const elevatedRisk =
-    risks.renalDisease ||
-    risks.tamoxifen ||
-    risks.ageAtStartOver60 ||
-    (risks.durationYears !== null && risks.durationYears >= 5) ||
-    (assessment !== null &&
-      assessment.methods.some((m) => m.status === 'exceeds' || m.status === 'caution'));
+    complete &&
+    (identifiedRiskFactors.length > 0 || doseElevated);
 
   const deferFirstFiveYears =
-    !elevatedRisk && (risks.durationYears === null || risks.durationYears < 5);
+    complete &&
+    !elevatedRisk &&
+    !isYes(risks.hcqFiveYearsOrMore);
 
   const recommendations: string[] = [
     'Baseline screening (fundus, OCT, wide-field FAF) soon after HCQ is started — for comparison with later exams.',
   ];
 
-  if (deferFirstFiveYears) {
+  if (!complete) {
+    recommendations.push(
+      'Complete all screening risk factor responses (Yes/No) before finalising the screening plan.',
+    );
+  } else if (deferFirstFiveYears) {
     recommendations.push(
       'Annual OCT and FAF may be deferred during the first 5 years if there are no significant risk factors.',
     );
   } else {
     recommendations.push(
-      'Annual screening with OCT and wide-field FAF while on HCQ (risk factors or ≥5 years of use).',
+      'Annual screening with OCT and wide-field FAF while on HCQ (risk factors present and/or dose concern).',
     );
   }
 
@@ -36,11 +74,17 @@ export function getScreeningGuidance(
   );
 
   const riskNotes: string[] = [];
-  if (risks.renalDisease) riskNotes.push('Renal disease increases retinopathy risk.');
-  if (risks.tamoxifen) riskNotes.push('Concurrent tamoxifen increases retinopathy risk.');
-  if (risks.ageAtStartOver60) riskNotes.push('HCQ initiation at older age increases risk.');
-  if (risks.durationYears !== null && risks.durationYears >= 5) {
-    riskNotes.push(`Duration of use: ${risks.durationYears} years — annual screening advised.`);
+  if (!complete) {
+    riskNotes.push('Screening risk factors incomplete — select Yes or No for each item.');
+  }
+  if (isYes(risks.renalDisease)) riskNotes.push('Renal disease increases retinopathy risk.');
+  if (isYes(risks.tamoxifen)) riskNotes.push('Concurrent tamoxifen increases retinopathy risk.');
+  if (isYes(risks.macularPathology)) {
+    riskNotes.push('Pre-existing macular pathology — baseline comparison and close monitoring advised.');
+  }
+  if (isYes(risks.ageAtStartOver60)) riskNotes.push('HCQ initiation at older age increases risk.');
+  if (isYes(risks.hcqFiveYearsOrMore)) {
+    riskNotes.push('On HCQ ≥5 years — annual screening advised.');
   }
   if (assessment?.cap400Warning) {
     riskNotes.push('Current dose exceeds 400 mg/day cap for severe obesity.');
@@ -49,11 +93,20 @@ export function getScreeningGuidance(
     riskNotes.push('Daily dose exceeds one or more safe dosing thresholds — discuss with prescriber.');
   }
 
+  const showRiskFactorWarning = complete && identifiedRiskFactors.length > 0;
+  const riskFactorWarningMessage = showRiskFactorWarning
+    ? `Higher-risk patient for HCQ retinal toxicity: ${identifiedRiskFactors.map((r) => r.label).join('; ')}. Consider closer screening and review dosing with the prescriber.`
+    : null;
+
   return {
     baselineRequired: true,
-    annualScreening: !deferFirstFiveYears,
+    annualScreening: complete && !deferFirstFiveYears,
     deferFirstFiveYears,
     elevatedRisk,
+    riskFactorsComplete: complete,
+    identifiedRiskFactors,
+    showRiskFactorWarning,
+    riskFactorWarningMessage,
     recommendations,
     riskNotes,
   };

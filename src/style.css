@@ -301,6 +301,82 @@ body {
   padding: 0.75rem 1rem;
 }
 
+.screening-risks {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.screening-risks__heading {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.screening-risks__intro {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.risk-yesno {
+  border: none;
+  margin: 0 0 0.85rem;
+  padding: 0;
+}
+
+.risk-yesno__legend {
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 0.4rem;
+  padding: 0;
+}
+
+.risk-yesno__options {
+  display: flex;
+  gap: 1rem;
+}
+
+.risk-yesno__label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: var(--min-touch);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.risk-factor-alert {
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.risk-factor-alert--incomplete {
+  background: var(--caution-bg);
+  border: 2px solid var(--caution);
+  color: var(--caution);
+}
+
+.risk-factor-alert--identified {
+  background: var(--danger-bg);
+  border: 2px solid var(--danger);
+  color: var(--danger);
+}
+
+.risk-factor-alert p {
+  margin: 0.5rem 0 0;
+  font-weight: 500;
+}
+
+.risk-factor-alert__list {
+  margin: 0.65rem 0 0;
+  padding-left: 1.25rem;
+  font-weight: 600;
+}
+
 .screening-inputs summary {
   font-weight: 700;
   cursor: pointer;
@@ -443,6 +519,11 @@ tr.status--exceeds {
   padding: 0.6rem 0.75rem;
   border-radius: 8px;
   margin: 0 0 0.75rem;
+}
+
+.screening-flag--incomplete {
+  background: var(--caution-bg);
+  color: var(--caution);
 }
 
 .screening-flag--elevated {

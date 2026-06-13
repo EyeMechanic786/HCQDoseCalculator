@@ -11,6 +11,16 @@ export function printSummary(assessment: HcqAssessment, screening: ScreeningGuid
     )
     .join('');
 
+  const riskFactorBlock = !screening.riskFactorsComplete
+    ? `<div class="disclaimer"><strong>Screening risk factors incomplete.</strong> Yes/No required for each item.</div>`
+    : screening.showRiskFactorWarning
+      ? `<div class="disclaimer" style="border-color:#991b1b;background:#fee2e2;">
+          <strong>Higher-risk patient — screening risk factors identified</strong>
+          <p>${screening.riskFactorWarningMessage}</p>
+          <ul>${screening.identifiedRiskFactors.map((r) => `<li>${r.label}</li>`).join('')}</ul>
+        </div>`
+      : '';
+
   win.document.write(`<!doctype html>
 <html lang="en">
 <head>
@@ -39,6 +49,7 @@ export function printSummary(assessment: HcqAssessment, screening: ScreeningGuid
   <p><strong>Daily dose:</strong> ${assessment.dailyDoseMg} mg</p>
   <p><strong>ABW:</strong> ${assessment.abwKg} kg | <strong>IBW:</strong> ${assessment.ibwKg} kg | <strong>BMI:</strong> ${assessment.bmi}</p>
   <p>${assessment.narrative}</p>
+  ${riskFactorBlock}
   <table>
     <thead><tr><th>Method</th><th>mg/kg</th><th>Max mg/day</th><th>Status</th></tr></thead>
     <tbody>${methods}</tbody>
