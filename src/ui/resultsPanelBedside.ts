@@ -1,4 +1,5 @@
 import { renderRiskFactorWarning } from './riskFactorWarning.ts';
+import { renderPrintButton } from './printBar.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import { formatNumber, kgToLb } from '../calc/units.ts';
 import type { HcqAssessment, ScreeningGuidance } from '../types.ts';
@@ -48,6 +49,9 @@ export function renderBedsideResults(
 
   return `
     <section class="bedside-results" aria-live="polite" aria-atomic="true">
+      <div class="bedside-print-top">
+        ${renderPrintButton('Print summary', 'bedside-btn bedside-btn--print-top')}
+      </div>
       <div class="bedside-hero ${heroClass}">
         <p class="bedside-hero__eyebrow">Recommendation · DoseChecker-style</p>
         <h2 class="bedside-hero__title">${heroTitle}</h2>
@@ -106,7 +110,7 @@ export function renderBedsideResults(
       </article>
 
       <div class="bedside-actions">
-        <button type="button" class="bedside-btn" id="print-btn">Print for clinic record</button>
+        ${renderPrintButton('Print for clinic record', 'bedside-btn')}
       </div>
 
       ${screeningHtml}

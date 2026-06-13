@@ -2,6 +2,8 @@ import { assessHcqDose, isValidInput } from './calc/hcqDose.ts';
 import { getScreeningGuidance } from './calc/screening.ts';
 import { ftInToCm, lbToKg } from './calc/units.ts';
 import { printSummary } from './print.ts';
+import { renderStickyPrintBar } from './ui/printBar.ts';
+import { showPrintNotice } from './ui/printNotice.ts';
 import type { AppDesign, HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
 import { renderBedsideForm } from './ui/calculatorFormBedside.ts';
 import {
@@ -86,6 +88,7 @@ function compute(): void {
     lastAssessment = null;
     lastScreening = getScreeningGuidance(null, parseRiskFactors(formState));
     resultsEl.innerHTML = renderResults(null, lastScreening, invalidMessage);
+    updatePrintBar(false);
     return;
   }
 
@@ -94,13 +97,23 @@ function compute(): void {
   lastAssessment = assessHcqDose(partial, formState.ibwAlgorithm);
   lastScreening = getScreeningGuidance(lastAssessment, parseRiskFactors(formState));
   resultsEl.innerHTML = renderResults(lastAssessment, lastScreening, null);
-  bindPrintButton();
+  updatePrintBar(true);
 }
 
-function bindPrintButton(): void {
-  document.getElementById('print-btn')?.addEventListener('click', () => {
-    if (lastAssessment) printSummary(lastAssessment, lastScreening);
-  });
+function updatePrintBar(visible: boolean): void {
+  const bar = document.getElementById('print-bar');
+  if (!bar) return;
+  bar.classList.toggle('print-bar--hidden', !visible);
+  bar.setAttribute('aria-hidden', String(!visible));
+}
+
+function handlePrint(): void {
+  if (!lastAssessment) {
+    showPrintNotice('Enter patient data to generate a printable summary.', true);
+    return;
+  }
+  const result = printSummary(lastAssessment, lastScreening);
+  showPrintNotice(result.message, !result.success);
 }
 
 function readFormFromDom(): void {
@@ -178,6 +191,7 @@ function renderApp(): void {
         <a href="https://apps.apple.com/us/app/dosechecker/id1233772258" target="_blank" rel="noopener noreferrer">DoseChecker</a> (iOS).
       </p>
     </footer>
+    ${renderStickyPrintBar(false)}
   `;
 
   bindFormEvents();
@@ -235,7 +249,15 @@ function bindFormEvents(): void {
 }
 
 app.addEventListener('click', (e) => {
-  const tab = (e.target as HTMLElement).closest('[data-design]') as HTMLElement | null;
+  const target = e.target as HTMLElement;
+
+  if (target.closest('[data-action="print"]')) {
+    e.preventDefault();
+    handlePrint();
+    return;
+  }
+
+  const tab = target.closest('[data-design]') as HTMLElement | null;
   if (!tab?.dataset.design) return;
   e.preventDefault();
   switchDesign(tab.dataset.design as AppDesign);

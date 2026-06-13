@@ -1,4 +1,5 @@
 import { renderRiskFactorWarning } from './riskFactorWarning.ts';
+import { renderPrintButton } from './printBar.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import type { HcqAssessment } from '../types.ts';
 import type { ScreeningGuidance } from '../types.ts';
@@ -66,9 +67,12 @@ export function renderResultsPanel(
 
   return `
     <section class="panel panel--results" aria-live="polite" aria-atomic="true">
+      <div class="results-print-top">
+        ${renderPrintButton('Print summary', 'btn btn--print btn--print-top')}
+      </div>
       <div class="results-header">
         <h2>Results</h2>
-        <button type="button" class="btn btn--secondary" id="print-btn">Print summary</button>
+        ${renderPrintButton('Print summary', 'btn btn--secondary')}
       </div>
 
       <p class="narrative">${assessment.narrative}</p>
