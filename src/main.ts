@@ -19,7 +19,7 @@ import {
   type FormState,
 } from './ui/calculatorForm.ts';
 import { loadDesign, renderDesignSwitcher, saveDesign } from './ui/design.ts';
-import { renderDisclaimer } from './ui/disclaimer.ts';
+import { initDisclaimer, renderDisclaimer } from './ui/disclaimer.ts';
 import { renderBedsideResults } from './ui/resultsPanelBedside.ts';
 import { renderResultsPanel } from './ui/resultsPanel.ts';
 import { switchResearchTab } from './ui/researchExportPanel.ts';
@@ -276,16 +276,13 @@ function renderApp(): void {
     </main>
     <footer class="site-footer">
       <p>Formula version: AAO 2026 · NIH/NHLBI IBW · Browning lesser-of-weight · v1.1</p>
-      <p class="site-footer__credit">
-        Concept inspired by Dr Elliot Perlman&apos;s
-        <a href="https://apps.apple.com/us/app/dosechecker/id1233772258" target="_blank" rel="noopener noreferrer">DoseChecker</a> (iOS).
-      </p>
     </footer>
     ${renderStickyPrintBar(false)}
   `;
 
   bindFormEvents();
   compute();
+  initDisclaimer();
 }
 
 function bindFormEvents(): void {

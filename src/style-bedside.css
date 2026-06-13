@@ -44,18 +44,26 @@ body.design-bedside .tagline {
   margin-right: auto;
 }
 
-body.design-bedside .disclaimer {
-  background: #fff;
+body.design-bedside .disclaimer:not([open]) {
+  background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border);
+}
+
+body.design-bedside .disclaimer[open] {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 0.5rem;
   color: var(--text-muted);
-  font-size: 0.82rem;
-  text-align: left;
 }
 
 body.design-bedside .disclaimer__summary {
-  padding: 0.55rem 1rem;
+  padding: 0.35rem 0;
   color: var(--text-muted);
+}
+
+body.design-bedside .disclaimer[open] .disclaimer__summary {
+  padding: 0.65rem 1rem 0.35rem;
 }
 
 body.design-bedside .disclaimer__body {

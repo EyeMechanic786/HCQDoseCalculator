@@ -2,7 +2,7 @@ export function renderDisclaimer(): string {
   return `
     <details class="disclaimer">
       <summary class="disclaimer__summary">Disclaimer &amp; attribution</summary>
-      <div class="disclaimer__body" role="note" aria-label="Disclaimer and attribution">
+      <div class="disclaimer__body">
         <p class="disclaimer__clinical">
           <strong>For clinician use only.</strong>
           This tool is clinical decision support for hydroxychloroquine dose assessment and screening planning.
@@ -26,4 +26,10 @@ export function renderDisclaimer(): string {
       </div>
     </details>
   `;
+}
+
+export function initDisclaimer(): void {
+  document.querySelectorAll<HTMLDetailsElement>('details.disclaimer').forEach((el) => {
+    el.open = false;
+  });
 }
