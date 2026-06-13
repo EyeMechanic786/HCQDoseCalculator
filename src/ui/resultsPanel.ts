@@ -1,6 +1,5 @@
 import { renderRiskFactorWarning } from './riskFactorWarning.ts';
 import { renderPrintButton } from './printBar.ts';
-import { renderResearchExportPanel } from './researchExportPanel.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import type { HcqAssessment } from '../types.ts';
 import type { ScreeningGuidance } from '../types.ts';
@@ -13,7 +12,7 @@ export function renderResultsPanel(
 ): string {
   if (invalidMessage) {
     return `
-      <section class="panel panel--results" aria-live="polite" aria-atomic="true">
+      <section class="panel panel--results" aria-live="polite" aria-atomic="true" id="results-panel">
         <h2>Results</h2>
         <p class="results-placeholder">${invalidMessage}</p>
       </section>
@@ -22,7 +21,7 @@ export function renderResultsPanel(
 
   if (!assessment) {
     return `
-      <section class="panel panel--results" aria-live="polite" aria-atomic="true">
+      <section class="panel panel--results" aria-live="polite" aria-atomic="true" id="results-panel">
         <h2>Results</h2>
         <p class="results-placeholder">Enter patient measurements and dose to see assessment.</p>
       </section>
@@ -67,7 +66,7 @@ export function renderResultsPanel(
     : '';
 
   return `
-    <section class="panel panel--results" aria-live="polite" aria-atomic="true">
+    <section class="panel panel--results" aria-live="polite" aria-atomic="true" id="results-panel">
       <div class="results-print-top">
         ${renderPrintButton('Print summary', 'btn btn--print btn--print-top')}
       </div>
@@ -126,8 +125,6 @@ export function renderResultsPanel(
       <p class="tablet-note">${assessment.tabletNote}</p>
 
       ${screeningBlock}
-
-      ${renderResearchExportPanel(true)}
 
       <details class="references">
         <summary>References &amp; formulae</summary>

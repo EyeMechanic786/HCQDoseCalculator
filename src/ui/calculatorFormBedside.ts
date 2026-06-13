@@ -1,11 +1,15 @@
 import type { FormState } from './calculatorForm.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
+import { renderResearchExportPanel } from './researchExportPanel.ts';
 
 /** DoseChecker-inspired compact input layout — height, weight, dose first. */
 export function renderBedsideForm(state: FormState): string {
   return `
     <section class="bedside-card bedside-card--inputs" aria-labelledby="bedside-inputs-heading">
       <h2 id="bedside-inputs-heading" class="bedside-card__title">Enter patient data</h2>
+      <p class="layout-hint layout-hint--mobile">
+        <a href="#results-root" class="layout-hint__link">Scroll down to Results</a> for the dose assessment.
+      </p>
       <form id="calc-form" class="bedside-form" novalidate>
         <div class="bedside-segment" role="group" aria-label="Sex">
           <button type="button" class="bedside-segment__btn ${state.sex === 'female' ? 'is-active' : ''}" data-sex="female">Female</button>
@@ -66,6 +70,8 @@ export function renderBedsideForm(state: FormState): string {
           </label>
         </details>
       </form>
+
+      ${renderResearchExportPanel()}
     </section>
   `;
 }

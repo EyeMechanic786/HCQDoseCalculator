@@ -2,15 +2,15 @@ import { getLogCount } from '../export/studyLog.ts';
 import { loadStudyMeta } from '../export/studyMeta.ts';
 import { todayIsoDate } from '../export/buildResearchRow.ts';
 
-export function renderResearchExportPanel(enabled: boolean): string {
+export function renderResearchExportPanel(): string {
   const logCount = getLogCount();
   const meta = loadStudyMeta();
   const today = todayIsoDate();
 
   return `
-    <details class="research-export" id="research-export">
+    <details class="research-export" id="research-export" open>
       <summary class="research-export__summary">
-        Research export
+        Research export (Excel)
         <span id="research-log-count" class="research-export__badge ${logCount === 0 ? 'research-export__badge--empty' : ''}" aria-label="${logCount} cases in study log">${logCount}</span>
       </summary>
       <div class="research-export__body">
@@ -30,22 +30,22 @@ export function renderResearchExportPanel(enabled: boolean): string {
           </label>
           <label class="research-export__field">
             <span>Subject ID</span>
-            <input type="text" id="research-subject-id" placeholder="e.g. 001" autocomplete="off" ${enabled ? '' : 'disabled'} />
+            <input type="text" id="research-subject-id" placeholder="e.g. 001" autocomplete="off" />
           </label>
           <label class="research-export__field">
             <span>Encounter date</span>
-            <input type="date" id="research-encounter-date" value="${today}" ${enabled ? '' : 'disabled'} />
+            <input type="date" id="research-encounter-date" value="${today}" />
           </label>
         </div>
 
         <div class="research-export__actions">
-          <button type="button" class="btn btn--secondary" data-action="research-add" ${enabled ? '' : 'disabled'}>
+          <button type="button" class="btn btn--secondary" data-action="research-add">
             Add to study log
           </button>
-          <button type="button" class="btn btn--secondary" data-action="research-export-current" ${enabled ? '' : 'disabled'}>
+          <button type="button" class="btn btn--secondary" data-action="research-export-current">
             Export current case
           </button>
-          <button type="button" class="btn btn--primary" data-action="research-download" ${enabled ? '' : 'disabled'}>
+          <button type="button" class="btn btn--primary" data-action="research-download">
             Download workbook (.xlsx)
           </button>
           <button type="button" class="btn btn--ghost" data-action="research-clear">
@@ -54,7 +54,7 @@ export function renderResearchExportPanel(enabled: boolean): string {
         </div>
 
         <p class="research-export__note">
-          Workbook includes all logged cases with AAO, IBW (NIH/NHLBI &amp; Devine), and hybrid columns, plus a data dictionary sheet.
+          Enter valid height, weight, and dose above before exporting. Workbook includes AAO, IBW (NIH/NHLBI &amp; Devine), and hybrid columns plus a data dictionary sheet.
         </p>
       </div>
     </details>

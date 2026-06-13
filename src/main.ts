@@ -228,7 +228,7 @@ function renderApp(): void {
     <main id="main" class="main">
       <div class="layout">
         <div id="form-root">${formHtml}</div>
-        <div id="results-root"></div>
+        <div id="results-root" tabindex="-1"></div>
       </div>
     </main>
     <footer class="site-footer">

@@ -1,5 +1,6 @@
 import type { HeightUnit, IbwAlgorithm, Sex, WeightUnit, YesNo } from '../types.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
+import { renderResearchExportPanel } from './researchExportPanel.ts';
 
 export interface FormState {
   sex: Sex;
@@ -41,6 +42,10 @@ export function renderCalculatorForm(state: FormState): string {
   return `
     <section class="panel" aria-labelledby="calc-heading">
       <h2 id="calc-heading">Patient &amp; dose</h2>
+      <p class="layout-hint layout-hint--desktop">Dose results appear in the panel to the right once data is entered.</p>
+      <p class="layout-hint layout-hint--mobile">
+        <a href="#results-root" class="layout-hint__link">Scroll down to Results</a> for the dose comparison table.
+      </p>
       <form id="calc-form" class="calc-form" novalidate>
         <fieldset class="field-group">
           <legend>Sex</legend>
@@ -120,6 +125,8 @@ export function renderCalculatorForm(state: FormState): string {
 
         ${renderScreeningRiskFactors(state)}
       </form>
+
+      ${renderResearchExportPanel()}
     </section>
   `;
 }

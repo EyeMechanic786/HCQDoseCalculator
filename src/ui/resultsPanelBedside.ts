@@ -1,6 +1,5 @@
 import { renderRiskFactorWarning } from './riskFactorWarning.ts';
 import { renderPrintButton } from './printBar.ts';
-import { renderResearchExportPanel } from './researchExportPanel.ts';
 import { statusClass, statusLabel } from '../calc/screening.ts';
 import { formatNumber, kgToLb } from '../calc/units.ts';
 import type { HcqAssessment, ScreeningGuidance } from '../types.ts';
@@ -49,7 +48,8 @@ export function renderBedsideResults(
     : '';
 
   return `
-    <section class="bedside-results" aria-live="polite" aria-atomic="true">
+    <section class="bedside-results" id="results-panel" aria-live="polite" aria-atomic="true">
+      <h2 class="bedside-results__heading">Results</h2>
       <div class="bedside-print-top">
         ${renderPrintButton('Print summary', 'bedside-btn bedside-btn--print-top')}
       </div>
@@ -115,8 +115,6 @@ export function renderBedsideResults(
       </div>
 
       ${screeningHtml}
-
-      ${renderResearchExportPanel(true)}
 
       <p class="bedside-footnote">
         Lesser-of-weight hybrid max: ${Math.round(assessment.methods[2]!.maxDailyDoseMg)} mg/day · BMI ${formatNumber(assessment.bmi, 1)}

@@ -461,14 +461,31 @@ body.design-bedside .site-footer {
 }
 
 body.design-bedside .research-export {
-  margin-top: 1rem;
-  border-radius: 12px;
+  margin-top: 1.25rem;
+}
+
+body.design-bedside .research-export__summary {
+  width: 100%;
+  justify-content: center;
+  border-radius: 10px 10px 0 0;
+}
+
+body.design-bedside .research-export:not([open]) .research-export__summary {
+  border-radius: 10px;
+  border-bottom: 2px solid #be185d;
 }
 
 body.design-bedside .research-export__actions .btn,
 body.design-bedside .research-export__actions .btn--primary,
 body.design-bedside .research-export__actions .btn--secondary {
   min-height: 48px;
+}
+
+.bedside-results__heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
 }
 
 @media print {
