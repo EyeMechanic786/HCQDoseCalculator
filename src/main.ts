@@ -8,7 +8,7 @@ import {
   handleDownloadWorkbook,
   handleExportCurrentCase,
 } from './export/researchActions.ts';
-import { updatePatientIdDisplay } from './export/patientId.ts';
+import { saveDraftPatientId } from './export/patientId.ts';
 import { renderStickyPrintBar } from './ui/printBar.ts';
 import { showPrintNotice } from './ui/printNotice.ts';
 import type { AppDesign, HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
@@ -133,14 +133,12 @@ function getFormFingerprint(): string | null {
 function syncPatientIdAfterFormChange(): void {
   const fingerprint = getFormFingerprint();
   if (lastCommittedFormFingerprint && fingerprint && fingerprint !== lastCommittedFormFingerprint) {
-    updatePatientIdDisplay();
     lastCommittedFormFingerprint = null;
   }
 }
 
 function markResearchCommitted(): void {
   lastCommittedFormFingerprint = getFormFingerprint();
-  updatePatientIdDisplay();
 }
 
 function handlePrint(): void {
@@ -232,6 +230,11 @@ function switchDesign(design: AppDesign): void {
 }
 
 function renderApp(): void {
+  const existingPatientId = (document.getElementById('research-patient-id') as HTMLInputElement | null)?.value;
+  if (existingPatientId !== undefined && existingPatientId !== null) {
+    saveDraftPatientId(existingPatientId);
+  }
+
   applyDesignClass();
 
   const formHtml =
@@ -271,14 +274,16 @@ function renderApp(): void {
 
   bindFormEvents();
   compute();
-  updatePatientIdDisplay();
 }
 
 function bindFormEvents(): void {
   const formRoot = document.getElementById('form-root');
   if (!formRoot) return;
 
-  formRoot.addEventListener('input', () => {
+  formRoot.addEventListener('input', (e) => {
+    if ((e.target as HTMLElement).id === 'research-patient-id') {
+      saveDraftPatientId((e.target as HTMLInputElement).value);
+    }
     readFormFromDom();
     compute();
   });

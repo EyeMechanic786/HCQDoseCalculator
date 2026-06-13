@@ -4,9 +4,16 @@ import {
 } from './constants.ts';
 import type { ResearchRow } from './columnSchema.ts';
 
+/** In-memory fallback when sessionStorage is unavailable. */
+let memoryLog: ResearchRow[] = [];
+
 function nextRecordId(): string {
   const seq = parseInt(sessionStorage.getItem(RECORD_SEQ_STORAGE_KEY) ?? '0', 10) + 1;
-  sessionStorage.setItem(RECORD_SEQ_STORAGE_KEY, String(seq));
+  try {
+    sessionStorage.setItem(RECORD_SEQ_STORAGE_KEY, String(seq));
+  } catch {
+    /* ignore */
+  }
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
   return `HCQ-${date}-${String(seq).padStart(4, '0')}`;
 }
@@ -14,16 +21,26 @@ function nextRecordId(): string {
 function loadRawLog(): ResearchRow[] {
   try {
     const raw = sessionStorage.getItem(STUDY_LOG_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as ResearchRow[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (raw) {
+      const parsed = JSON.parse(raw) as ResearchRow[];
+      if (Array.isArray(parsed)) {
+        memoryLog = parsed;
+        return parsed;
+      }
+    }
   } catch {
-    return [];
+    /* fall through to memory */
   }
+  return memoryLog;
 }
 
 function saveRawLog(rows: ResearchRow[]): void {
-  sessionStorage.setItem(STUDY_LOG_STORAGE_KEY, JSON.stringify(rows));
+  memoryLog = rows;
+  try {
+    sessionStorage.setItem(STUDY_LOG_STORAGE_KEY, JSON.stringify(rows));
+  } catch {
+    /* memoryLog remains authoritative */
+  }
 }
 
 export function getStudyLog(): ResearchRow[] {
@@ -41,7 +58,16 @@ export function addToStudyLog(row: ResearchRow): void {
 }
 
 export function clearStudyLog(): void {
-  sessionStorage.removeItem(STUDY_LOG_STORAGE_KEY);
+  memoryLog = [];
+  try {
+    sessionStorage.removeItem(STUDY_LOG_STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getSavedPatientIds(): string[] {
+  return loadRawLog().map((row) => String(row.patient_id));
 }
 
 export function createRecordId(): string {
@@ -54,4 +80,15 @@ export function updateLogBadge(): void {
   const count = getLogCount();
   badge.textContent = String(count);
   badge.classList.toggle('research-export__badge--empty', count === 0);
+}
+
+export function updateSavedIdsList(): void {
+  const list = document.getElementById('research-saved-ids');
+  if (!list) return;
+  const ids = getSavedPatientIds();
+  if (ids.length === 0) {
+    list.textContent = 'No patients saved yet this session.';
+    return;
+  }
+  list.textContent = `Saved this session: ${ids.join(', ')}`;
 }

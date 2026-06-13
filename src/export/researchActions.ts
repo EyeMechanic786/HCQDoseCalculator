@@ -1,10 +1,10 @@
 import { buildResearchRowFromState, todayIsoDate } from './buildResearchRow.ts';
 import {
-  allocatePatientId,
-  getCurrentPatientId,
-  isPatientIdUsed,
-  resetPatientIdSequence,
-  updatePatientIdDisplay,
+  prepareNextPatientIdInput,
+  readPatientIdInput,
+  resetPatientIdInput,
+  showPatientIdError,
+  validatePatientId,
 } from './patientId.ts';
 import { readStudyMetaFromDom } from './studyMeta.ts';
 import {
@@ -13,6 +13,7 @@ import {
   createRecordId,
   getStudyLog,
   updateLogBadge,
+  updateSavedIdsList,
 } from './studyLog.ts';
 import type { ResearchRow } from './columnSchema.ts';
 import type { FormState } from '../ui/calculatorForm.ts';
@@ -47,21 +48,21 @@ export function buildCurrentResearchRow(
   );
 }
 
-/** Assign a unique patient ID and build a research row. */
 export function commitPatientRow(
   formState: FormState,
   patientInput: PatientInput,
   layoutUsed: AppDesign,
-): { row: ResearchRow; patientId: string } {
-  const log = getStudyLog();
-  let patientId = allocatePatientId();
-
-  while (isPatientIdUsed(patientId, log)) {
-    patientId = allocatePatientId();
+  patientId: string,
+): { ok: true; row: ResearchRow; patientId: string } | { ok: false; message: string } {
+  const validationError = validatePatientId(patientId);
+  if (validationError) {
+    showPatientIdError(validationError);
+    return { ok: false, message: validationError };
   }
 
+  showPatientIdError(null);
   const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
-  return { row, patientId };
+  return { ok: true, row, patientId };
 }
 
 export function handleAddToStudyLog(
@@ -69,34 +70,36 @@ export function handleAddToStudyLog(
   patientInput: PatientInput,
   layoutUsed: AppDesign,
 ): ResearchExportResult {
-  const { row, patientId } = commitPatientRow(formState, patientInput, layoutUsed);
-  addToStudyLog(row);
+  const patientId = readPatientIdInput();
+  const committed = commitPatientRow(formState, patientInput, layoutUsed, patientId);
+  if (!committed.ok) {
+    return { success: false, message: committed.message };
+  }
+
+  addToStudyLog(committed.row);
   updateLogBadge();
-  updatePatientIdDisplay();
+  updateSavedIdsList();
+  prepareNextPatientIdInput();
+
   return {
     success: true,
-    message: `Patient ${patientId} saved to study log (${getStudyLog().length} total). Next Patient ID: ${getCurrentPatientId()}.`,
+    message: `Patient ${committed.patientId} saved to study log (${getStudyLog().length} total). Enter the next unique Patient ID before saving another case.`,
   };
 }
 
 export async function handleDownloadWorkbook(
-  formState: FormState,
-  patientInput: PatientInput | null,
-  layoutUsed: AppDesign,
-  includeCurrentIfValid: boolean,
+  _formState: FormState,
+  _patientInput: PatientInput | null,
+  _layoutUsed: AppDesign,
+  _includeCurrentIfValid: boolean,
 ): Promise<ResearchExportResult> {
   const meta = readStudyMetaFromDom();
-  let rows = [...getStudyLog()];
-
-  if (rows.length === 0 && includeCurrentIfValid && patientInput) {
-    const { row } = commitPatientRow(formState, patientInput, layoutUsed);
-    rows = [row];
-  }
+  const rows = getStudyLog();
 
   if (rows.length === 0) {
     return {
       success: false,
-      message: 'Study log is empty. Save patients to the log or enter valid data before exporting.',
+      message: 'Study log is empty. Enter a unique Patient ID and save each case before downloading.',
     };
   }
 
@@ -124,14 +127,23 @@ export async function handleExportCurrentCase(
   layoutUsed: AppDesign,
 ): Promise<ResearchExportResult> {
   const meta = readStudyMetaFromDom();
-  const { row, patientId } = commitPatientRow(formState, patientInput, layoutUsed);
+  const patientId = readPatientIdInput();
+  const committed = commitPatientRow(formState, patientInput, layoutUsed, patientId);
+  if (!committed.ok) {
+    return { success: false, message: committed.message };
+  }
+
+  addToStudyLog(committed.row);
+  updateLogBadge();
+  updateSavedIdsList();
+  prepareNextPatientIdInput();
 
   try {
     const { exportResearchWorkbook } = await import('./excelWorkbook.ts');
-    await exportResearchWorkbook([row], meta.studyId, meta.siteId);
+    await exportResearchWorkbook([committed.row], meta.studyId, meta.siteId);
     return {
       success: true,
-      message: `Exported Patient ${patientId} to Excel. Next Patient ID: ${getCurrentPatientId()}.`,
+      message: `Exported Patient ${committed.patientId} to Excel and added to session log (${getStudyLog().length} total).`,
     };
   } catch {
     return {
@@ -147,23 +159,23 @@ export function handleClearStudyLog(): ResearchExportResult {
   }
   if (
     !window.confirm(
-      'Clear all cases from the study log? Patient ID sequence will reset to 000010. This cannot be undone.',
+      'Clear all cases from the study log? You will need to enter new Patient IDs for each case. This cannot be undone.',
     )
   ) {
     return { success: false, message: 'Clear cancelled.' };
   }
   clearStudyLog();
-  resetPatientIdSequence();
+  resetPatientIdInput();
   updateLogBadge();
-  updatePatientIdDisplay();
-  return { success: true, message: 'Study log cleared. Next Patient ID: 000010.' };
+  updateSavedIdsList();
+  return { success: true, message: 'Study log cleared. Enter a unique Patient ID for the next case.' };
 }
 
 function validateUniquePatientIds(rows: ResearchRow[]): {
   ok: boolean;
   result: ResearchExportResult;
 } {
-  const patientIds = rows.map((row) => String(row.patient_id));
+  const patientIds = rows.map((row) => String(row.patient_id).toLowerCase());
   if (new Set(patientIds).size === patientIds.length) {
     return { ok: true, result: { success: true, message: '' } };
   }
@@ -171,15 +183,7 @@ function validateUniquePatientIds(rows: ResearchRow[]): {
     ok: false,
     result: {
       success: false,
-      message: 'Duplicate Patient IDs in the study log. Clear the log and re-save cases.',
+      message: 'Duplicate Patient IDs in the study log. Clear the log and re-save each case with a unique ID.',
     },
   };
-}
-
-export function formFingerprint(input: PatientInput): string {
-  return `${input.sex}|${roundInput(input.heightCm)}|${roundInput(input.weightKg)}|${input.dailyDoseMg}`;
-}
-
-function roundInput(n: number): number {
-  return Math.round(n * 10) / 10;
 }

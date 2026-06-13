@@ -846,20 +846,62 @@ tr.status--exceeds {
 }
 
 .patient-id-card__label {
-  margin: 0;
+  display: block;
+  margin: 0 0 0.35rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: #831843;
 }
 
-.patient-id-card__value {
-  margin: 0.35rem 0 0.75rem;
-  font-size: 2.25rem;
+.patient-id-card__input {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  margin: 0 auto 0.5rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 1.75rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.12em;
+  text-align: center;
   color: #9d174d;
   font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  border: 2px solid #f9a8d4;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.patient-id-card__input:focus-visible {
+  outline: 3px solid #ec4899;
+  outline-offset: 2px;
+}
+
+.patient-id-card__input[aria-invalid='true'] {
+  border-color: #b42318;
+  background: #fef2f2;
+}
+
+.patient-id-card__error {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #b42318;
+  text-align: left;
+}
+
+.patient-id-card__error[hidden] {
+  display: none;
+}
+
+.patient-id-card__saved {
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #831843;
+  background: #fce7f3;
+  border-radius: 6px;
+  text-align: left;
 }
 
 .patient-id-card__note {

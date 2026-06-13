@@ -1,77 +1,144 @@
-import { PATIENT_ID_SEQ_STORAGE_KEY } from './constants.ts';
+import { DRAFT_PATIENT_ID_KEY } from './constants.ts';
+import { getStudyLog, updateSavedIdsList } from './studyLog.ts';
 
-/** First anonymous patient ID in a session (000010). */
+/** Default suggestion when no numeric IDs exist in the log. */
 export const PATIENT_ID_START = 10;
 
-/** In-memory fallback when sessionStorage is blocked (e.g. some private modes). */
-let memorySequence: number | null = null;
+const PATIENT_ID_PATTERN = /^[A-Za-z0-9_-]{1,20}$/;
 
 export function formatPatientId(sequence: number): string {
   return String(sequence).padStart(6, '0');
 }
 
-function readStoredSequence(): number | null {
+export function normalizePatientId(raw: string): string {
+  return raw.trim();
+}
+
+export function readPatientIdInput(): string {
+  const input = document.getElementById('research-patient-id') as HTMLInputElement | null;
+  return normalizePatientId(input?.value ?? loadDraftPatientId());
+}
+
+export function saveDraftPatientId(id: string): void {
   try {
-    const stored = sessionStorage.getItem(PATIENT_ID_SEQ_STORAGE_KEY);
-    if (stored === null) return null;
-    const parsed = parseInt(stored, 10);
-    return Number.isFinite(parsed) && parsed >= PATIENT_ID_START ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredSequence(sequence: number): void {
-  memorySequence = sequence;
-  try {
-    sessionStorage.setItem(PATIENT_ID_SEQ_STORAGE_KEY, String(sequence));
-  } catch {
-    /* sessionStorage unavailable — memorySequence remains the source of truth */
-  }
-}
-
-export function getNextPatientIdSequence(): number {
-  const stored = readStoredSequence();
-  if (stored !== null) {
-    memorySequence = stored;
-    return stored;
-  }
-  if (memorySequence !== null && memorySequence >= PATIENT_ID_START) {
-    return memorySequence;
-  }
-  return PATIENT_ID_START;
-}
-
-/** ID for the current in-progress patient (does not advance the counter). */
-export function getCurrentPatientId(): string {
-  return formatPatientId(getNextPatientIdSequence());
-}
-
-/** Assign ID for this case and advance the session counter for the next patient. */
-export function allocatePatientId(): string {
-  const sequence = getNextPatientIdSequence();
-  const assigned = formatPatientId(sequence);
-  writeStoredSequence(sequence + 1);
-  updatePatientIdDisplay();
-  return assigned;
-}
-
-export function resetPatientIdSequence(): void {
-  memorySequence = null;
-  try {
-    sessionStorage.removeItem(PATIENT_ID_SEQ_STORAGE_KEY);
+    sessionStorage.setItem(DRAFT_PATIENT_ID_KEY, normalizePatientId(id));
   } catch {
     /* ignore */
   }
-  updatePatientIdDisplay();
+}
+
+export function loadDraftPatientId(): string {
+  try {
+    const draft = sessionStorage.getItem(DRAFT_PATIENT_ID_KEY);
+    if (draft && normalizePatientId(draft)) return normalizePatientId(draft);
+  } catch {
+    /* ignore */
+  }
+  return getSuggestedPatientId();
+}
+
+export function clearDraftPatientId(): void {
+  try {
+    sessionStorage.removeItem(DRAFT_PATIENT_ID_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Suggest the next six-digit ID based on IDs already saved this session. */
+export function getSuggestedPatientId(): string {
+  const log = getStudyLog();
+  let maxNumeric = PATIENT_ID_START - 1;
+
+  for (const row of log) {
+    const id = String(row.patient_id);
+    if (/^\d{1,6}$/.test(id)) {
+      maxNumeric = Math.max(maxNumeric, parseInt(id, 10));
+    }
+  }
+
+  return formatPatientId(Math.max(maxNumeric + 1, PATIENT_ID_START));
+}
+
+export function isPatientIdUsed(patientId: string, log: { patient_id?: string | number }[]): boolean {
+  const normalized = normalizePatientId(patientId).toLowerCase();
+  return log.some((row) => normalizePatientId(String(row.patient_id)).toLowerCase() === normalized);
+}
+
+export function validatePatientId(
+  patientId: string,
+  log: { patient_id?: string | number }[] = getStudyLog(),
+): string | null {
+  const id = normalizePatientId(patientId);
+
+  if (!id) {
+    return 'Enter a unique Patient ID before saving this case.';
+  }
+  if (!PATIENT_ID_PATTERN.test(id)) {
+    return 'Patient ID must be 1–20 characters: letters, numbers, hyphens, or underscores only.';
+  }
+  if (isPatientIdUsed(id, log)) {
+    return `Patient ID "${id}" is already saved. Enter a different ID for each patient.`;
+  }
+  return null;
+}
+
+export function showPatientIdError(message: string | null): void {
+  const errorEl = document.getElementById('research-patient-id-error');
+  const input = document.getElementById('research-patient-id') as HTMLInputElement | null;
+  if (!errorEl || !input) return;
+
+  if (message) {
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    input.focus();
+    switchResearchTabSafe('patient-id');
+  } else {
+    errorEl.textContent = '';
+    errorEl.hidden = true;
+    input.removeAttribute('aria-invalid');
+  }
+}
+
+function switchResearchTabSafe(tabId: string): void {
+  if (typeof document.querySelectorAll !== 'function') return;
+  document.querySelectorAll<HTMLElement>('[data-research-tab]').forEach((tab) => {
+    const isActive = tab.dataset.researchTab === tabId;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+  });
+  document.querySelectorAll<HTMLElement>('[data-research-panel]').forEach((panel) => {
+    const isActive = panel.dataset.researchPanel === tabId;
+    panel.classList.toggle('is-active', isActive);
+    panel.hidden = !isActive;
+  });
+}
+
+/** After a successful save, suggest the next ID in the input for the clinician to confirm or edit. */
+export function prepareNextPatientIdInput(): void {
+  const input = document.getElementById('research-patient-id') as HTMLInputElement | null;
+  const suggested = getSuggestedPatientId();
+  saveDraftPatientId(suggested);
+  if (!input) return;
+  input.value = suggested;
+  input.placeholder = suggested;
+  showPatientIdError(null);
+  updateSavedIdsList();
+}
+
+export function resetPatientIdInput(): void {
+  const input = document.getElementById('research-patient-id') as HTMLInputElement | null;
+  if (!input) return;
+  input.value = getSuggestedPatientId();
+  input.placeholder = 'e.g. 000010';
+  showPatientIdError(null);
+}
+
+export function resetPatientIdSequence(): void {
+  resetPatientIdInput();
 }
 
 export function updatePatientIdDisplay(): void {
-  const display = document.getElementById('research-patient-id');
-  if (display) display.textContent = getCurrentPatientId();
-}
-
-/** True if this patient_id is already present in the study log. */
-export function isPatientIdUsed(patientId: string, log: { patient_id?: string | number }[]): boolean {
-  return log.some((row) => String(row.patient_id) === patientId);
+  prepareNextPatientIdInput();
 }

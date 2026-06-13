@@ -4,4 +4,4 @@ export const FORMULA_VERSION = 'AAO 2026 · NIH/NHLBI IBW · Browning lesser-of-
 export const STUDY_LOG_STORAGE_KEY = 'hcq-study-log';
 export const STUDY_META_STORAGE_KEY = 'hcq-study-meta';
 export const RECORD_SEQ_STORAGE_KEY = 'hcq-record-seq';
-export const PATIENT_ID_SEQ_STORAGE_KEY = 'hcq-patient-id-seq';
+export const DRAFT_PATIENT_ID_KEY = 'hcq-draft-patient-id';

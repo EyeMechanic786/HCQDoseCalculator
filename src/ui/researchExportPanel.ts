@@ -1,5 +1,5 @@
-import { getCurrentPatientId } from '../export/patientId.ts';
-import { getLogCount } from '../export/studyLog.ts';
+import { getSuggestedPatientId, loadDraftPatientId } from '../export/patientId.ts';
+import { getLogCount, getSavedPatientIds } from '../export/studyLog.ts';
 import { loadStudyMeta } from '../export/studyMeta.ts';
 import { todayIsoDate } from '../export/buildResearchRow.ts';
 
@@ -7,7 +7,12 @@ export function renderResearchExportPanel(): string {
   const logCount = getLogCount();
   const meta = loadStudyMeta();
   const today = todayIsoDate();
-  const patientId = getCurrentPatientId();
+  const suggestedId = getSuggestedPatientId();
+  const draftId = loadDraftPatientId();
+  const displayId = draftId || suggestedId;
+  const savedIds = getSavedPatientIds();
+  const savedIdsText =
+    savedIds.length > 0 ? `Saved this session: ${savedIds.join(', ')}` : 'No patients saved yet this session.';
 
   return `
     <details class="research-export" id="research-export" open>
@@ -30,13 +35,27 @@ export function renderResearchExportPanel(): string {
 
         <div id="research-panel-patient-id" class="research-tab-panel is-active" role="tabpanel" aria-labelledby="research-tab-patient-id" data-research-panel="patient-id">
           <div class="patient-id-card">
-            <p class="patient-id-card__eyebrow">Anonymous identifier · sequential</p>
-            <p class="patient-id-card__label">Current Patient ID</p>
-            <p id="research-patient-id" class="patient-id-card__value" aria-live="polite">${patientId}</p>
-            <p class="patient-id-card__note">
-              This ID is assigned when you <strong>save or export</strong> the current patient, then advances automatically for the next entry.
-              Not linked to name, NHS number, or date of birth. First ID: <strong>000010</strong>.
+            <p class="patient-id-card__eyebrow">Required · anonymous · unique per patient</p>
+            <label class="patient-id-card__label" for="research-patient-id">Patient ID</label>
+            <input
+              type="text"
+              id="research-patient-id"
+              class="patient-id-card__input"
+              value="${escapeAttr(displayId)}"
+              placeholder="e.g. 000010"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              maxlength="20"
+              aria-describedby="research-patient-id-help research-patient-id-error"
+              required
+            />
+            <p id="research-patient-id-error" class="patient-id-card__error" role="alert" hidden></p>
+            <p id="research-patient-id-help" class="patient-id-card__note">
+              Enter a <strong>unique ID for each patient</strong> before saving (not a name or NHS number).
+              Suggested next ID: <strong>${escapeAttr(suggestedId)}</strong> — change if your study uses a different scheme.
             </p>
+            <p id="research-saved-ids" class="patient-id-card__saved" aria-live="polite">${escapeHtml(savedIdsText)}</p>
           </div>
           <label class="research-export__field research-export__field--date">
             <span>Encounter date</span>
@@ -62,7 +81,7 @@ export function renderResearchExportPanel(): string {
 
         <div id="research-panel-export" class="research-tab-panel" role="tabpanel" aria-labelledby="research-tab-export" data-research-panel="export" hidden>
           <p class="research-export__intro">
-            Save cases to a session log, then download a formatted Excel workbook for analysis.
+            Save each patient with a unique Patient ID, then download the full session workbook.
             Data remains in this browser until exported.
           </p>
           <div class="research-export__actions">
@@ -80,7 +99,7 @@ export function renderResearchExportPanel(): string {
             </button>
           </div>
           <p class="research-export__note">
-            Enter valid height, weight, and dose above before saving. Workbook includes AAO, IBW (NIH/NHLBI &amp; Devine), hybrid columns, and a data dictionary.
+            Each save requires a unique Patient ID on the Patient ID tab. The workbook includes all saved cases with AAO, IBW, and hybrid columns plus a data dictionary.
           </p>
         </div>
       </div>
@@ -93,6 +112,10 @@ function escapeAttr(value: string): string {
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;');
+}
+
+function escapeHtml(value: string): string {
+  return escapeAttr(value);
 }
 
 export function switchResearchTab(tabId: string): void {
