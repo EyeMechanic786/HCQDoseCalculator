@@ -34,8 +34,8 @@ export function renderResearchExportPanel(): string {
             <p class="patient-id-card__label">Current Patient ID</p>
             <p id="research-patient-id" class="patient-id-card__value" aria-live="polite">${patientId}</p>
             <p class="patient-id-card__note">
-              Assigned automatically when you save or export. Not linked to name, NHS number, or date of birth.
-              First ID in each session is <strong>000010</strong>, then 000011, 000012…
+              This ID is assigned when you <strong>save or export</strong> the current patient, then advances automatically for the next entry.
+              Not linked to name, NHS number, or date of birth. First ID: <strong>000010</strong>.
             </p>
           </div>
           <label class="research-export__field research-export__field--date">

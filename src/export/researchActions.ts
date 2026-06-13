@@ -1,5 +1,11 @@
 import { buildResearchRowFromState, todayIsoDate } from './buildResearchRow.ts';
-import { allocatePatientId, resetPatientIdSequence } from './patientId.ts';
+import {
+  allocatePatientId,
+  getCurrentPatientId,
+  isPatientIdUsed,
+  resetPatientIdSequence,
+  updatePatientIdDisplay,
+} from './patientId.ts';
 import { readStudyMetaFromDom } from './studyMeta.ts';
 import {
   addToStudyLog,
@@ -8,6 +14,7 @@ import {
   getStudyLog,
   updateLogBadge,
 } from './studyLog.ts';
+import type { ResearchRow } from './columnSchema.ts';
 import type { FormState } from '../ui/calculatorForm.ts';
 import type { AppDesign, PatientInput } from '../types.ts';
 
@@ -26,7 +33,7 @@ export function buildCurrentResearchRow(
   patientInput: PatientInput,
   layoutUsed: AppDesign,
   patientId: string,
-) {
+): ResearchRow {
   const meta = readStudyMetaFromDom();
   return buildResearchRowFromState(
     formState,
@@ -40,18 +47,35 @@ export function buildCurrentResearchRow(
   );
 }
 
+/** Assign a unique patient ID and build a research row. */
+export function commitPatientRow(
+  formState: FormState,
+  patientInput: PatientInput,
+  layoutUsed: AppDesign,
+): { row: ResearchRow; patientId: string } {
+  const log = getStudyLog();
+  let patientId = allocatePatientId();
+
+  while (isPatientIdUsed(patientId, log)) {
+    patientId = allocatePatientId();
+  }
+
+  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
+  return { row, patientId };
+}
+
 export function handleAddToStudyLog(
   formState: FormState,
   patientInput: PatientInput,
   layoutUsed: AppDesign,
 ): ResearchExportResult {
-  const patientId = allocatePatientId();
-  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
+  const { row, patientId } = commitPatientRow(formState, patientInput, layoutUsed);
   addToStudyLog(row);
   updateLogBadge();
+  updatePatientIdDisplay();
   return {
     success: true,
-    message: `Patient ${patientId} saved to study log (${getStudyLog().length} total).`,
+    message: `Patient ${patientId} saved to study log (${getStudyLog().length} total). Next Patient ID: ${getCurrentPatientId()}.`,
   };
 }
 
@@ -62,19 +86,22 @@ export async function handleDownloadWorkbook(
   includeCurrentIfValid: boolean,
 ): Promise<ResearchExportResult> {
   const meta = readStudyMetaFromDom();
-  let rows = getStudyLog();
+  let rows = [...getStudyLog()];
 
   if (rows.length === 0 && includeCurrentIfValid && patientInput) {
-    const patientId = allocatePatientId();
-    rows = [buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId)];
+    const { row } = commitPatientRow(formState, patientInput, layoutUsed);
+    rows = [row];
   }
 
   if (rows.length === 0) {
     return {
       success: false,
-      message: 'Study log is empty. Add cases or enter valid patient data to export.',
+      message: 'Study log is empty. Save patients to the log or enter valid data before exporting.',
     };
   }
+
+  const duplicateCheck = validateUniquePatientIds(rows);
+  if (!duplicateCheck.ok) return duplicateCheck.result;
 
   try {
     const { exportResearchWorkbook } = await import('./excelWorkbook.ts');
@@ -97,15 +124,14 @@ export async function handleExportCurrentCase(
   layoutUsed: AppDesign,
 ): Promise<ResearchExportResult> {
   const meta = readStudyMetaFromDom();
-  const patientId = allocatePatientId();
-  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
+  const { row, patientId } = commitPatientRow(formState, patientInput, layoutUsed);
 
   try {
     const { exportResearchWorkbook } = await import('./excelWorkbook.ts');
     await exportResearchWorkbook([row], meta.studyId, meta.siteId);
     return {
       success: true,
-      message: `Exported Patient ${patientId} to Excel.`,
+      message: `Exported Patient ${patientId} to Excel. Next Patient ID: ${getCurrentPatientId()}.`,
     };
   } catch {
     return {
@@ -129,5 +155,31 @@ export function handleClearStudyLog(): ResearchExportResult {
   clearStudyLog();
   resetPatientIdSequence();
   updateLogBadge();
+  updatePatientIdDisplay();
   return { success: true, message: 'Study log cleared. Next Patient ID: 000010.' };
+}
+
+function validateUniquePatientIds(rows: ResearchRow[]): {
+  ok: boolean;
+  result: ResearchExportResult;
+} {
+  const patientIds = rows.map((row) => String(row.patient_id));
+  if (new Set(patientIds).size === patientIds.length) {
+    return { ok: true, result: { success: true, message: '' } };
+  }
+  return {
+    ok: false,
+    result: {
+      success: false,
+      message: 'Duplicate Patient IDs in the study log. Clear the log and re-save cases.',
+    },
+  };
+}
+
+export function formFingerprint(input: PatientInput): string {
+  return `${input.sex}|${roundInput(input.heightCm)}|${roundInput(input.weightKg)}|${input.dailyDoseMg}`;
+}
+
+function roundInput(n: number): number {
+  return Math.round(n * 10) / 10;
 }

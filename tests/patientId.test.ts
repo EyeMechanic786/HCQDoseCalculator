@@ -41,10 +41,21 @@ describe('patientId', () => {
     expect(getCurrentPatientId()).toBe('000012');
   });
 
-  it('resets the sequence to 000010', () => {
-    allocatePatientId();
-    allocatePatientId();
+  it('uses memory fallback when sessionStorage throws', () => {
+    vi.stubGlobal('sessionStorage', {
+      getItem: () => {
+        throw new Error('blocked');
+      },
+      setItem: () => {
+        throw new Error('blocked');
+      },
+      removeItem: () => {
+        throw new Error('blocked');
+      },
+    });
     resetPatientIdSequence();
-    expect(getCurrentPatientId()).toBe('000010');
+    expect(allocatePatientId()).toBe('000010');
+    expect(allocatePatientId()).toBe('000011');
+    expect(getCurrentPatientId()).toBe('000012');
   });
 });

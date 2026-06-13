@@ -106,6 +106,7 @@ function compute(): void {
   lastScreening = getScreeningGuidance(lastAssessment, parseRiskFactors(formState));
   resultsEl.innerHTML = renderResults(lastAssessment, lastScreening, null);
   updatePrintBar(true);
+  syncPatientIdAfterFormChange();
 }
 
 function updatePrintBar(visible: boolean): void {
@@ -115,10 +116,31 @@ function updatePrintBar(visible: boolean): void {
   bar.setAttribute('aria-hidden', String(!visible));
 }
 
+let lastCommittedFormFingerprint: string | null = null;
+
 function getValidPatientInput(): PatientInput | null {
   const partial = parsePatientInput(formState);
   if (!partial || validateInput(partial) || !isValidInput(partial)) return null;
   return partial;
+}
+
+function getFormFingerprint(): string | null {
+  const input = getValidPatientInput();
+  if (!input) return null;
+  return `${input.sex}|${Math.round(input.heightCm * 10) / 10}|${Math.round(input.weightKg * 10) / 10}|${input.dailyDoseMg}`;
+}
+
+function syncPatientIdAfterFormChange(): void {
+  const fingerprint = getFormFingerprint();
+  if (lastCommittedFormFingerprint && fingerprint && fingerprint !== lastCommittedFormFingerprint) {
+    updatePatientIdDisplay();
+    lastCommittedFormFingerprint = null;
+  }
+}
+
+function markResearchCommitted(): void {
+  lastCommittedFormFingerprint = getFormFingerprint();
+  updatePatientIdDisplay();
 }
 
 function handlePrint(): void {
@@ -136,6 +158,7 @@ async function handleResearchAction(action: string): Promise<void> {
 
   if (action === 'research-clear') {
     const result = handleClearStudyLog();
+    if (result.success) lastCommittedFormFingerprint = null;
     showPrintNotice(result.message, !result.success);
     return;
   }
@@ -147,6 +170,7 @@ async function handleResearchAction(action: string): Promise<void> {
 
   if (action === 'research-add') {
     const result = handleAddToStudyLog(formState, patientInput, appDesign);
+    if (result.success) markResearchCommitted();
     showPrintNotice(result.message, !result.success);
     return;
   }
@@ -154,6 +178,7 @@ async function handleResearchAction(action: string): Promise<void> {
   if (action === 'research-export-current') {
     showPrintNotice('Preparing Excel export…', false);
     const result = await handleExportCurrentCase(formState, patientInput, appDesign);
+    if (result.success) markResearchCommitted();
     showPrintNotice(result.message, !result.success);
     return;
   }
@@ -161,6 +186,7 @@ async function handleResearchAction(action: string): Promise<void> {
   if (action === 'research-download') {
     showPrintNotice('Preparing Excel workbook…', false);
     const result = await handleDownloadWorkbook(formState, patientInput, appDesign, true);
+    if (result.success) markResearchCommitted();
     showPrintNotice(result.message, !result.success);
   }
 }
