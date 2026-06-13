@@ -119,7 +119,7 @@ export const RESEARCH_COLUMNS: ColumnDef[] = [
   { key: 'tamoxifen', header: 'Tamoxifen', group: 'Screening', description: 'Concurrent tamoxifen (yes/no/blank)', width: 12 },
   { key: 'macular_pathology', header: 'Macular pathology', group: 'Screening', description: 'Pre-existing macular pathology (yes/no/blank)', width: 16 },
   { key: 'hcq_started_after_60', header: 'HCQ start >60', group: 'Screening', description: 'HCQ started after age 60 (yes/no/blank)', width: 14 },
-  { key: 'on_hcq_ge_5_years', header: 'HCQ ≥5 years', group: 'Screening', description: 'On HCQ ≥5 years (yes/no/blank)', width: 14 },
+  { key: 'on_hcq_ge_20_years', header: 'HCQ ≥20 years', group: 'Screening', description: 'On HCQ ≥20 years (yes/no/blank)', width: 14 },
   { key: 'risk_factors_complete', header: 'Risks complete', group: 'Screening', description: 'Y if all screening risk factors answered', width: 14 },
   { key: 'identified_risk_count', header: 'Risk count', group: 'Screening', description: 'Number of Yes risk factors', width: 12 },
   { key: 'identified_risk_factors', header: 'Risk factors', group: 'Screening', description: 'Semicolon-separated list of Yes risk factors', width: 36 },

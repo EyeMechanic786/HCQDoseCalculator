@@ -21,7 +21,7 @@ const referenceForm: FormState = {
   tamoxifen: 'no',
   macularPathology: 'no',
   ageAtStartOver60: 'no',
-  hcqFiveYearsOrMore: 'yes',
+  hcqTwentyYearsOrMore: 'yes',
 };
 
 describe('buildResearchRow', () => {
