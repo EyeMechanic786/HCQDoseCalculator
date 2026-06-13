@@ -131,6 +131,7 @@ export function renderResultsPanel(
         <ul>
           <li><a href="https://www.aao.org/education/clinical-statement/revised-recommendations-on-screening-chloroquine-h" target="_blank" rel="noopener noreferrer">AAO Recommendations on Screening for HCQ Retinopathy (2026)</a></li>
           <li><a href="https://pubmed.ncbi.nlm.nih.gov/41232611/" target="_blank" rel="noopener noreferrer">PubMed: AAO 2025 Revision</a></li>
+          <li><a href="https://www.rcophth.ac.uk/news-views/hydroxychloroquine-and-chloroquine-retinopathy/" target="_blank" rel="noopener noreferrer">RCOphth — HCQ/Chloroquine retinopathy monitoring (UK, 2020)</a></li>
           <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4116363/" target="_blank" rel="noopener noreferrer">Michaelides et al. — IBW algorithms for HCQ screening</a></li>
         </ul>
         <p class="formula-note">

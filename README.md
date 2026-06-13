@@ -1,8 +1,8 @@
 # HCQ Dose Calculator
 
-A browser-based clinical decision-support tool for **ophthalmology and optometry professionals** to assess hydroxychloroquine (HCQ) daily dosing against retinal toxicity risk thresholds and AAO screening guidance.
+A browser-based clinical decision-support tool for **ophthalmology and optometry professionals** to assess hydroxychloroquine (HCQ) daily dosing against retinal toxicity risk thresholds and screening guidance aligned with US and UK practice.
 
-**For clinician use only.** This app supports clinical judgment; it does not replace prescribing decisions, rheumatology consultation, or formal AAO screening protocols. It is **not FDA cleared** and is not a substitute for professional medical judgment.
+**For clinician use only.** This app is clinical decision support; it does not replace prescribing decisions, rheumatology consultation, or formal screening and monitoring protocols — including current [AAO (US)](https://www.aao.org/education/clinical-statement/revised-recommendations-on-screening-chloroquine-h) and [RCOphth (UK)](https://www.rcophth.ac.uk/news-views/hydroxychloroquine-and-chloroquine-retinopathy/) guidance for NHS practice. It is **not FDA cleared** and is not a substitute for professional medical judgment.
 
 ## Acknowledgement
 
@@ -147,6 +147,7 @@ tests/           Vitest unit tests for clinical math
 
 - [AAO Recommendations on Screening for HCQ Retinopathy (2026)](https://www.aao.org/education/clinical-statement/revised-recommendations-on-screening-chloroquine-h)
 - [PubMed: AAO 2025 Revision](https://pubmed.ncbi.nlm.nih.gov/41232611/)
+- [RCOphth — Hydroxychloroquine and Chloroquine Retinopathy: Recommendations on Monitoring (UK, 2020)](https://www.rcophth.ac.uk/news-views/hydroxychloroquine-and-chloroquine-retinopathy/)
 - [Michaelides et al. — IBW algorithms for HCQ screening (PMC4116363)](https://pmc.ncbi.nlm.nih.gov/articles/PMC4116363/)
 - [Browning — Somatotype and safe HCQ dosing (PMC5939880)](https://pmc.ncbi.nlm.nih.gov/articles/PMC5939880/)
 - [Browning — Safe dosing for HCQ dependent on body type (*Modern Retina*)](https://www.modernretina.com/view/safe-dosing-hcq-dependent-body-type)
@@ -154,7 +155,7 @@ tests/           Vitest unit tests for clinical math
 
 ## Disclaimer
 
-This software is provided for educational and clinical decision-support purposes only. It is **not FDA cleared**, not a medical device, and not a substitute for professional medical judgment. Always verify dosing with the prescribing physician and follow current institutional protocols.
+This software is provided for educational and clinical decision-support purposes only. It is **not FDA cleared**, not a medical device, and not a substitute for professional medical judgment. It does not replace current AAO or RCOphth UK screening and monitoring protocols. Always verify dosing with the prescribing physician and follow current institutional protocols.
 
 See **Acknowledgement** above for credit to Dr Elliot Perlman's DoseChecker (iOS), which inspired this project.
 

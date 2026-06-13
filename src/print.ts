@@ -5,7 +5,7 @@ export interface PrintResult {
   message: string;
 }
 
-function buildPrintHtml(assessment: HcqAssessment, screening: ScreeningGuidance): string {
+export function buildPrintHtml(assessment: HcqAssessment, screening: ScreeningGuidance): string {
   const methods = assessment.methods
     .map(
       (m) =>
@@ -51,8 +51,8 @@ function buildPrintHtml(assessment: HcqAssessment, screening: ScreeningGuidance)
   <h1>HCQ Dose Assessment Summary</h1>
   <p>Generated ${new Date().toLocaleString()}</p>
   <div class="disclaimer">
-    <p><strong>For clinician use only.</strong> Decision support — not medical advice. Not FDA cleared.
-    Does not replace prescribing decisions or AAO screening protocols.</p>
+    <p><strong>For clinician use only.</strong> Clinical decision support — not medical advice. Not FDA cleared.
+    Does not replace prescribing decisions, rheumatology consultation, or formal AAO (US) or RCOphth (UK) screening and monitoring protocols for NHS practice.</p>
     <p><strong>Original concept credit:</strong> Dr Elliot Perlman — DoseChecker (iOS, Massachusetts Eye and Ear).
     Perlman et al., JAMA Ophthalmology 2018.</p>
   </div>

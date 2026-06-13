@@ -1,0 +1,50 @@
+<!-- Demo print preview — open in browser, then Ctrl+P / Save as PDF -->
+<!-- Default demo: female 163 cm, 73 kg, 400 mg/day -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HCQ Dose Assessment Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; color: #111; line-height: 1.5; }
+    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .disclaimer { font-size: 0.85rem; border: 1px solid #666; padding: 0.75rem; margin: 1rem 0; }
+    .alert { padding: 0.75rem; margin: 1rem 0; border: 2px solid #666; }
+    .alert--danger { border-color: #991b1b; background: #fee2e2; }
+    .alert--caution { border-color: #92400e; background: #fef3c7; }
+    .alert--ok { border-color: #14532d; background: #dcfce7; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid #333; padding: 0.4rem 0.6rem; text-align: left; }
+    th { background: #eee; }
+    ul { padding-left: 1.25rem; }
+    @media print { body { margin: 0.5in; } }
+  </style>
+</head>
+<body>
+  <h1>HCQ Dose Assessment Summary</h1>
+  <p>Generated 13/06/2026, 09:21:32</p>
+  <div class="disclaimer">
+    <p><strong>For clinician use only.</strong> Clinical decision support — not medical advice. Not FDA cleared.
+    Does not replace prescribing decisions, rheumatology consultation, or formal AAO (US) or RCOphth (UK) screening and monitoring protocols for NHS practice.</p>
+    <p><strong>Original concept credit:</strong> Dr Elliot Perlman — DoseChecker (iOS, Massachusetts Eye and Ear).
+    Perlman et al., JAMA Ophthalmology 2018.</p>
+  </div>
+  <p><strong>Daily dose:</strong> 400 mg</p>
+  <p><strong>ABW:</strong> 73 kg | <strong>IBW:</strong> 63.7 kg | <strong>BMI:</strong> 27.5</p>
+  <p>400 mg/day is borderline for AAO real body weight (5.5 mg/kg vs 5 mg/kg threshold); 400 mg/day is within IBW (NIH/NHLBI) (6.3 mg/kg vs 6.5 mg/kg threshold); 400 mg/day is exceeds Lesser-of-weight (Browning-style) (6.3 mg/kg vs 5 mg/kg threshold).</p>
+  <div class="alert alert--danger"><strong>Dose warning:</strong> Current dose exceeds one or more safe dosing thresholds.</div>
+  <div class="alert alert--danger">
+          <strong>Higher-risk patient — screening risk factors identified</strong>
+          <p>Higher-risk patient for HCQ retinal toxicity: Concurrent renal disease; Macular pathology; On HCQ ≥5 years. Consider closer screening and review dosing with the prescriber.</p>
+          <ul><li>Concurrent renal disease</li><li>Macular pathology</li><li>On HCQ ≥5 years</li></ul>
+        </div>
+  <table>
+    <thead><tr><th>Method</th><th>mg/kg</th><th>Max mg/day</th><th>Status</th></tr></thead>
+    <tbody><tr><td>AAO real body weight</td><td>5.48 mg/kg</td><td>365 mg</td><td>caution</td></tr><tr><td>IBW (NIH/NHLBI)</td><td>6.28 mg/kg</td><td>414 mg</td><td>within</td></tr><tr><td>Lesser-of-weight (Browning-style)</td><td>6.28 mg/kg</td><td>318 mg</td><td>exceeds</td></tr></tbody>
+  </table>
+  <h2>Screening guidance</h2>
+  <ul><li>Baseline screening (fundus, OCT, wide-field FAF) soon after HCQ is started — for comparison with later exams.</li><li>Annual screening with OCT and wide-field FAF while on HCQ (risk factors present and/or dose concern).</li><li>Visual fields and mfERG are adjunct confirmatory tests, not primary screening tools.</li><li>Communicate dosing concerns and screening findings with the prescribing physician.</li></ul>
+  <h3>Risk notes</h3><ul><li>Renal disease increases retinopathy risk.</li><li>Pre-existing macular pathology — baseline comparison and close monitoring advised.</li><li>On HCQ ≥5 years — annual screening advised.</li><li>Daily dose exceeds one or more safe dosing thresholds — discuss with prescriber.</li></ul>
+  <p style="font-size:0.8rem;margin-top:2rem;">Formula version: AAO 2026 · NIH/NHLBI IBW · v1.1</p>
+</body>
+</html>

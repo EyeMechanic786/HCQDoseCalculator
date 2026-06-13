@@ -3,8 +3,13 @@ export function renderDisclaimer(): string {
     <aside class="disclaimer" role="note" aria-label="Disclaimer and attribution">
       <p class="disclaimer__clinical">
         <strong>For clinician use only.</strong>
-        This tool supports clinical judgment for hydroxychloroquine dose assessment and screening planning.
-        It does not replace prescribing decisions, rheumatology consultation, or AAO screening protocols.
+        This tool is clinical decision support for hydroxychloroquine dose assessment and screening planning.
+        It does not replace prescribing decisions, rheumatology consultation, or formal screening and monitoring protocols —
+        including current
+        <a href="https://www.aao.org/education/clinical-statement/revised-recommendations-on-screening-chloroquine-h" target="_blank" rel="noopener noreferrer">AAO (US)</a>
+        and
+        <a href="https://www.rcophth.ac.uk/news-views/hydroxychloroquine-and-chloroquine-retinopathy/" target="_blank" rel="noopener noreferrer">RCOphth (UK)</a>
+        guidance for NHS practice.
         Not medical advice. Not FDA cleared. Not a substitute for the judgment of a qualified healthcare professional.
       </p>
       <p class="disclaimer__credit">
