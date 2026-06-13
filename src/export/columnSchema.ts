@@ -90,6 +90,22 @@ export const STUDY_DATA_COLUMNS: StudyColumnDef[] = [
       'Min–max of guideline max daily doses (AAO ABW, IBW, hybrid); most restrictive to least restrictive ceiling',
     width: 24,
   },
+  {
+    key: 'retinal_toxicity',
+    header: 'Retinal toxicity',
+    group: 'Clinical outcomes',
+    description: 'HCQ retinal toxicity assessment: Absent, Probable, or Definite',
+    width: 16,
+    validation: { kind: 'list', values: ['Absent', 'Probable', 'Definite'] },
+  },
+  {
+    key: 'dose_adjustment_recommended',
+    header: 'Dose adjustment recommended',
+    group: 'Clinical outcomes',
+    description: 'Whether a dose adjustment is recommended (Yes or No)',
+    width: 22,
+    validation: { kind: 'list', values: ['Yes', 'No'] },
+  },
 ];
 
 export type StudyDataRow = Record<string, string | number>;
@@ -99,6 +115,10 @@ export function studyRowToOrderedValues(row: StudyDataRow): (string | number)[] 
 }
 
 export const HCQ_DOSE_OPTIONS = ['200', '300', '400'] as const;
+
+export const RETINAL_TOXICITY_OPTIONS = ['Absent', 'Probable', 'Definite'] as const;
+
+export const DOSE_ADJUSTMENT_OPTIONS = ['Yes', 'No'] as const;
 
 function methodColumns(prefix: string, group: string, methodLabel: string): ColumnDef[] {
   return [
@@ -183,6 +203,9 @@ export const RESEARCH_COLUMNS: ColumnDef[] = [
   { key: 'safe_dose_min_mg', header: 'Safe max (min)', group: 'Dose range', description: 'Most restrictive max daily dose across AAO, IBW, hybrid (mg/day)', width: 14 },
   { key: 'safe_dose_max_mg', header: 'Safe max (max)', group: 'Dose range', description: 'Least restrictive max daily dose across methods (mg/day)', width: 14 },
   { key: 'safe_dose_range', header: 'Safe dose range', group: 'Dose range', description: 'Formatted min–max safe daily dose ceiling (mg/day)', width: 22 },
+
+  { key: 'retinal_toxicity', header: 'Retinal toxicity', group: 'Clinical outcomes', description: 'HCQ retinal toxicity: Absent, Probable, or Definite', width: 16 },
+  { key: 'dose_adjustment_recommended', header: 'Dose adjustment', group: 'Clinical outcomes', description: 'Dose adjustment recommended: Yes or No', width: 18 },
 
   ...methodColumns('aao_abw', 'AAO (ABW)', 'AAO ≤5.0 mg/kg actual body weight'),
   ...methodColumns('ibw_nhlbi', 'IBW NIH/NHLBI', 'IBW ≤6.5 mg/kg (NIH/NHLBI)'),

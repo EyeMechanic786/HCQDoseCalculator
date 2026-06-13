@@ -346,7 +346,7 @@ function addExportInfoSheet(workbook: ExcelJS.Workbook, meta: WorkbookMeta): voi
     ['Cases exported', meta.rowCount],
     ['App version', APP_VERSION],
     ['Formula version', FORMULA_VERSION],
-    ['Primary sheet', 'Study_Data (9 patient columns with dropdown validation)'],
+    ['Primary sheet', 'Study_Data (11 patient columns with dropdown validation)'],
     ['Detailed sheet', 'Detailed_Data (full technical export)'],
     ['Tool', 'HCQ Dose Calculator (GitHub Pages)'],
     ['Disclaimer', 'Clinical decision support only. Does not replace AAO or RCOphth protocols.'],

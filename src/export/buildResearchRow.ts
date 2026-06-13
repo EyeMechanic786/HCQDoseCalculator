@@ -56,6 +56,17 @@ function yesNoExport(value: string): string {
   return value === 'yes' || value === 'no' ? value : '';
 }
 
+function yesNoLabel(value: string): string {
+  if (value === 'yes') return 'Yes';
+  if (value === 'no') return 'No';
+  return '';
+}
+
+function retinalToxicityExport(value: string): string {
+  if (value === 'Absent' || value === 'Probable' || value === 'Definite') return value;
+  return '';
+}
+
 function heightEntered(state: FormState): string {
   if (state.heightUnit === 'cm') return state.heightCm;
   return `${state.heightFt}'${state.heightIn}"`;
@@ -93,6 +104,8 @@ export function buildStudyDataRow(input: BuildResearchRowInput): StudyDataRow {
     bmi: assessmentUi.bmi,
     ibw_kg: assessmentUi.ibwKg,
     safe_dose_range: safeRange.label,
+    retinal_toxicity: retinalToxicityExport(formState.retinalToxicity),
+    dose_adjustment_recommended: yesNoLabel(formState.doseAdjustmentRecommended),
   };
 }
 
@@ -107,6 +120,8 @@ export function buildStudyDataRowFromResearchRow(row: ResearchRow): StudyDataRow
     bmi: row.bmi,
     ibw_kg: row.ibw_kg ?? row.ibw_nhlbi_kg,
     safe_dose_range: row.safe_dose_range ?? '',
+    retinal_toxicity: row.retinal_toxicity ?? '',
+    dose_adjustment_recommended: row.dose_adjustment_recommended ?? '',
   };
 }
 
@@ -181,6 +196,9 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     safe_dose_min_mg: safeRange.minMg,
     safe_dose_max_mg: safeRange.maxMg,
     safe_dose_range: safeRange.label,
+
+    retinal_toxicity: retinalToxicityExport(formState.retinalToxicity),
+    dose_adjustment_recommended: yesNoLabel(formState.doseAdjustmentRecommended),
 
     ...methodRowFields('aao_abw', aao),
     ...methodRowFields('ibw_nhlbi', ibwNhlbi),

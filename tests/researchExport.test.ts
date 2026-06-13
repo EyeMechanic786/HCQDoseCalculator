@@ -24,6 +24,8 @@ const referenceForm: FormState = {
   ageAtStartOver60: 'no',
   hcqFiveYearsOrMore: 'yes',
   hcqTwentyYearsOrMore: 'no',
+  retinalToxicity: 'Probable',
+  doseAdjustmentRecommended: 'yes',
 };
 
 const referenceMeta = {
@@ -37,7 +39,7 @@ const referenceMeta = {
 };
 
 describe('buildStudyDataRow', () => {
-  it('includes all nine Study_Data columns', () => {
+  it('includes all eleven Study_Data columns', () => {
     const row = buildStudyDataRow({
       formState: referenceForm,
       patientInput: referenceInput,
@@ -67,6 +69,8 @@ describe('buildStudyDataRow', () => {
     expect(row.bmi).toBe(27.5);
     expect(row.ibw_kg).toBe(63.7);
     expect(row.safe_dose_range).toBe('318–414 mg/day');
+    expect(row.retinal_toxicity).toBe('Probable');
+    expect(row.dose_adjustment_recommended).toBe('Yes');
   });
 });
 
@@ -129,6 +133,6 @@ describe('STUDY_DATA_COLUMNS', () => {
   it('has unique column keys', () => {
     const keys = STUDY_DATA_COLUMNS.map((c) => c.key);
     expect(new Set(keys).size).toBe(keys.length);
-    expect(keys).toHaveLength(9);
+    expect(keys).toHaveLength(11);
   });
 });

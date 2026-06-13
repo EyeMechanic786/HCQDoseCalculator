@@ -12,6 +12,8 @@ export type DoseStatus = 'within' | 'exceeds' | 'caution';
 /** Explicit clinician response required for each screening risk factor. */
 export type YesNo = '' | 'yes' | 'no';
 
+export type RetinalToxicityLevel = '' | 'Absent' | 'Probable' | 'Definite';
+
 export interface PatientInput {
   sex: Sex;
   heightCm: number;

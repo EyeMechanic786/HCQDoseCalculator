@@ -100,7 +100,7 @@ export function renderResearchExportPanel(): string {
           </div>
           <p class="research-export__note">
             Each save requires a unique Patient ID on the Patient ID tab. The workbook opens on
-            <strong>Study_Data</strong> — nine patient columns with dropdowns (gender, dose, duration)
+            <strong>Study_Data</strong> — eleven patient columns with dropdowns (gender, dose, duration, retinal toxicity, dose adjustment)
             plus safe dose range — and includes <strong>Detailed_Data</strong> for full technical output.
           </p>
         </div>

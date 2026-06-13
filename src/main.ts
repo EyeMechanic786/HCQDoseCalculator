@@ -217,6 +217,12 @@ function readFormFromDom(): void {
   formState.ibwAlgorithm = (
     (document.getElementById('ibw-algorithm') as HTMLSelectElement)?.value ?? 'nhlbi'
   ) as FormState['ibwAlgorithm'];
+  const toxicity = (document.getElementById('retinal-toxicity') as HTMLSelectElement)?.value ?? '';
+  formState.retinalToxicity =
+    toxicity === 'Absent' || toxicity === 'Probable' || toxicity === 'Definite'
+      ? toxicity
+      : '';
+  formState.doseAdjustmentRecommended = readYesNo('doseAdjustmentRecommended');
   formState.renalDisease = readYesNo('renalDisease');
   formState.tamoxifen = readYesNo('tamoxifen');
   formState.macularPathology = readYesNo('macularPathology');

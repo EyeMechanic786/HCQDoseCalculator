@@ -1,5 +1,6 @@
 import type { FormState } from './calculatorForm.ts';
 import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
+import { renderClinicalOutcomes } from './clinicalOutcomesForm.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 import { renderResearchExportPanel } from './researchExportPanel.ts';
 
@@ -70,6 +71,8 @@ export function renderBedsideForm(state: FormState): string {
             </div>
           </label>
         </div>
+
+        ${renderClinicalOutcomes(state)}
 
         ${renderScreeningRiskFactors(state)}
 

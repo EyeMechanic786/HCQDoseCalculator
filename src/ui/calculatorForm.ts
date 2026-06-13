@@ -1,5 +1,6 @@
 import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
-import type { HeightUnit, IbwAlgorithm, Sex, WeightUnit, YesNo } from '../types.ts';
+import type { HeightUnit, IbwAlgorithm, RetinalToxicityLevel, Sex, WeightUnit, YesNo } from '../types.ts';
+import { renderClinicalOutcomes } from './clinicalOutcomesForm.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 import { renderResearchExportPanel } from './researchExportPanel.ts';
 
@@ -14,6 +15,8 @@ export interface FormState {
   dailyDoseMg: string;
   hcqDurationYears: string;
   ibwAlgorithm: IbwAlgorithm;
+  retinalToxicity: RetinalToxicityLevel;
+  doseAdjustmentRecommended: YesNo;
   renalDisease: YesNo;
   tamoxifen: YesNo;
   macularPathology: YesNo;
@@ -34,6 +37,8 @@ export const defaultFormState: FormState = {
   dailyDoseMg: '400',
   hcqDurationYears: '',
   ibwAlgorithm: 'nhlbi',
+  retinalToxicity: '',
+  doseAdjustmentRecommended: '',
   renalDisease: '',
   tamoxifen: '',
   macularPathology: '',
@@ -131,6 +136,8 @@ export function renderCalculatorForm(state: FormState): string {
             <option value="devine" ${state.ibwAlgorithm === 'devine' ? 'selected' : ''}>Devine</option>
           </select>
         </label>
+
+        ${renderClinicalOutcomes(state)}
 
         ${renderScreeningRiskFactors(state)}
       </form>
