@@ -210,7 +210,10 @@ function readFormFromDom(): void {
     (document.getElementById('height-in') as HTMLInputElement)?.value ?? formState.heightIn;
   formState.weight = (document.getElementById('weight') as HTMLInputElement)?.value ?? formState.weight;
   formState.dailyDoseMg =
-    (document.getElementById('daily-dose') as HTMLInputElement)?.value ?? formState.dailyDoseMg;
+    (document.getElementById('daily-dose') as HTMLInputElement | HTMLSelectElement)?.value ??
+    formState.dailyDoseMg;
+  formState.hcqDurationYears =
+    (document.getElementById('hcq-duration') as HTMLInputElement)?.value ?? formState.hcqDurationYears;
   formState.ibwAlgorithm = (
     (document.getElementById('ibw-algorithm') as HTMLSelectElement)?.value ?? 'nhlbi'
   ) as FormState['ibwAlgorithm'];

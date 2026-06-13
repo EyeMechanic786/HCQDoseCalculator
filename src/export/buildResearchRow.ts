@@ -11,7 +11,8 @@ import type {
   ScreeningGuidance,
 } from '../types.ts';
 import { APP_VERSION, FORMULA_VERSION } from './constants.ts';
-import type { ResearchRow } from './columnSchema.ts';
+import type { ResearchRow, StudyDataRow } from './columnSchema.ts';
+import { computeSafeDoseRange } from './safeDoseRange.ts';
 
 export interface BuildResearchRowMeta {
   recordId: string;
@@ -64,6 +65,51 @@ function countByStatus(methods: MethodResult[], status: DoseStatus): number {
   return methods.filter((m) => m.status === status).length;
 }
 
+function genderLabel(sex: PatientInput['sex']): string {
+  return sex === 'male' ? 'Male' : 'Female';
+}
+
+function parseDurationYears(value: string): number | '' {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  const years = Number(trimmed);
+  if (!Number.isFinite(years) || years < 0 || years > 100) return '';
+  return Math.round(years);
+}
+
+export function buildStudyDataRow(input: BuildResearchRowInput): StudyDataRow {
+  const { formState, patientInput, meta } = input;
+  const assessmentUi = assessHcqDose(patientInput, formState.ibwAlgorithm);
+  const safeRange = computeSafeDoseRange(assessmentUi);
+  const duration = parseDurationYears(formState.hcqDurationYears);
+
+  return {
+    patient_id: meta.patientId,
+    gender: genderLabel(patientInput.sex),
+    hcq_duration_years: duration === '' ? '' : duration,
+    daily_hcq_mg: patientInput.dailyDoseMg,
+    abw_kg: assessmentUi.abwKg,
+    height_cm: round(patientInput.heightCm, 1),
+    bmi: assessmentUi.bmi,
+    ibw_kg: assessmentUi.ibwKg,
+    safe_dose_range: safeRange.label,
+  };
+}
+
+export function buildStudyDataRowFromResearchRow(row: ResearchRow): StudyDataRow {
+  return {
+    patient_id: row.patient_id,
+    gender: row.gender ?? genderLabel(row.sex as PatientInput['sex']),
+    hcq_duration_years: row.hcq_duration_years ?? '',
+    daily_hcq_mg: row.daily_hcq_mg,
+    abw_kg: row.abw_kg,
+    height_cm: row.height_cm,
+    bmi: row.bmi,
+    ibw_kg: row.ibw_kg ?? row.ibw_nhlbi_kg,
+    safe_dose_range: row.safe_dose_range ?? '',
+  };
+}
+
 export function buildResearchAssessments(patientInput: PatientInput): {
   assessmentUi: HcqAssessment;
   assessmentNhlbi: HcqAssessment;
@@ -97,6 +143,8 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
   const hybridDevine = getMethod(assessmentDevine, 'hybrid');
   const compareMethods = [aao, ibwNhlbi, ibwDevine, hybridNhlbi, hybridDevine];
   const { weeklyRegimen: w } = assessmentUi;
+  const safeRange = computeSafeDoseRange(assessmentUi);
+  const duration = parseDurationYears(formState.hcqDurationYears);
 
   const row: ResearchRow = {
     record_id: meta.recordId,
@@ -110,6 +158,8 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     encounter_date: meta.encounterDate,
 
     sex: patientInput.sex,
+    gender: genderLabel(patientInput.sex),
+    hcq_duration_years: duration === '' ? '' : duration,
     height_cm: round(patientInput.heightCm, 1),
     height_entered: heightEntered(formState),
     height_unit: formState.heightUnit,
@@ -122,11 +172,15 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     abw_kg: assessmentUi.abwKg,
     ibw_nhlbi_kg: assessmentNhlbi.ibwKg,
     ibw_devine_kg: assessmentDevine.ibwKg,
+    ibw_kg: assessmentUi.ibwKg,
     dosing_weight_kg: assessmentUi.dosingWeightKg,
     dosing_weight_nhlbi_kg: assessmentNhlbi.dosingWeightKg,
     dosing_weight_devine_kg: assessmentDevine.dosingWeightKg,
     bmi: assessmentUi.bmi,
     severe_obesity_bmi35: assessmentUi.bmi >= 35 ? 'Y' : 'N',
+    safe_dose_min_mg: safeRange.minMg,
+    safe_dose_max_mg: safeRange.maxMg,
+    safe_dose_range: safeRange.label,
 
     ...methodRowFields('aao_abw', aao),
     ...methodRowFields('ibw_nhlbi', ibwNhlbi),

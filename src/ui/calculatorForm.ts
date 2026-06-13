@@ -1,3 +1,4 @@
+import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
 import type { HeightUnit, IbwAlgorithm, Sex, WeightUnit, YesNo } from '../types.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 import { renderResearchExportPanel } from './researchExportPanel.ts';
@@ -11,6 +12,7 @@ export interface FormState {
   weightUnit: WeightUnit;
   weight: string;
   dailyDoseMg: string;
+  hcqDurationYears: string;
   ibwAlgorithm: IbwAlgorithm;
   renalDisease: YesNo;
   tamoxifen: YesNo;
@@ -30,6 +32,7 @@ export const defaultFormState: FormState = {
   weightUnit: 'kg',
   weight: '73',
   dailyDoseMg: '400',
+  hcqDurationYears: '',
   ibwAlgorithm: 'nhlbi',
   renalDisease: '',
   tamoxifen: '',
@@ -107,14 +110,18 @@ export function renderCalculatorForm(state: FormState): string {
         </div>
 
         <label class="field">
+          <span class="field__label">Duration of HCQ use (years)</span>
+          <input type="number" id="hcq-duration" name="hcqDurationYears" min="0" max="100" step="1" value="${state.hcqDurationYears}" inputmode="numeric" placeholder="0–100" />
+        </label>
+
+        <label class="field">
           <span class="field__label">Daily HCQ dose (mg)</span>
-          <input type="number" id="daily-dose" name="dailyDoseMg" min="50" max="1200" step="50" value="${state.dailyDoseMg}" list="dose-presets" inputmode="numeric" />
-          <datalist id="dose-presets">
-            <option value="200"></option>
-            <option value="300"></option>
-            <option value="400"></option>
-            <option value="600"></option>
-          </datalist>
+          <select id="daily-dose" name="dailyDoseMg">
+            ${HCQ_DOSE_OPTIONS.map(
+              (dose) =>
+                `<option value="${dose}" ${state.dailyDoseMg === dose ? 'selected' : ''}>${dose} mg/day</option>`,
+            ).join('')}
+          </select>
         </label>
 
         <label class="field">

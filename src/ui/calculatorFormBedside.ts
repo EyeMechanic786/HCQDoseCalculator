@@ -1,4 +1,5 @@
 import type { FormState } from './calculatorForm.ts';
+import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
 import { renderResearchExportPanel } from './researchExportPanel.ts';
 
@@ -49,11 +50,23 @@ export function renderBedsideForm(state: FormState): string {
             </div>
           </label>
 
+          <label class="bedside-field">
+            <span class="bedside-field__label">HCQ duration</span>
+            <div class="bedside-field__row">
+              <input type="number" id="hcq-duration" class="bedside-input bedside-input--short" min="0" max="100" step="1" value="${state.hcqDurationYears}" aria-label="Years on HCQ" placeholder="0–100" />
+              <span class="bedside-unit">years</span>
+            </div>
+          </label>
+
           <label class="bedside-field bedside-field--dose">
             <span class="bedside-field__label">Current daily dose</span>
             <div class="bedside-field__row">
-              <input type="number" id="daily-dose" class="bedside-input bedside-input--dose" min="50" max="1200" step="50" value="${state.dailyDoseMg}" aria-label="Daily dose in milligrams" />
-              <span class="bedside-unit">mg/day</span>
+              <select id="daily-dose" class="bedside-select bedside-input--dose" aria-label="Daily dose in milligrams">
+                ${HCQ_DOSE_OPTIONS.map(
+                  (dose) =>
+                    `<option value="${dose}" ${state.dailyDoseMg === dose ? 'selected' : ''}>${dose} mg/day</option>`,
+                ).join('')}
+              </select>
             </div>
           </label>
         </div>

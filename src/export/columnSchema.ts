@@ -5,7 +5,100 @@ export interface ColumnDef {
   description: string;
   width: number;
   statusColumn?: boolean;
+  numberFormat?: string;
 }
+
+export type ColumnValidation =
+  | { kind: 'list'; values: string[] }
+  | { kind: 'whole'; min: number; max: number };
+
+export interface StudyColumnDef extends ColumnDef {
+  validation?: ColumnValidation;
+}
+
+export const STUDY_DATA_COLUMNS: StudyColumnDef[] = [
+  {
+    key: 'patient_id',
+    header: 'Patient ID',
+    group: 'Patient data',
+    description: 'Anonymous unique patient identifier (no PHI)',
+    width: 14,
+  },
+  {
+    key: 'gender',
+    header: 'Gender',
+    group: 'Patient data',
+    description: 'Biological sex used for IBW calculation',
+    width: 12,
+    validation: { kind: 'list', values: ['Male', 'Female'] },
+  },
+  {
+    key: 'hcq_duration_years',
+    header: 'HCQ duration (years)',
+    group: 'Patient data',
+    description: 'Duration of hydroxychloroquine use in years (0–100)',
+    width: 18,
+    validation: { kind: 'whole', min: 0, max: 100 },
+    numberFormat: '0',
+  },
+  {
+    key: 'daily_hcq_mg',
+    header: 'Daily HCQ dose (mg)',
+    group: 'Patient data',
+    description: 'Prescribed daily hydroxychloroquine dose',
+    width: 18,
+    validation: { kind: 'list', values: ['200', '300', '400'] },
+    numberFormat: '0',
+  },
+  {
+    key: 'abw_kg',
+    header: 'ABW (kg)',
+    group: 'Patient data',
+    description: 'Actual body weight in kilograms',
+    width: 12,
+    numberFormat: '0.0',
+  },
+  {
+    key: 'height_cm',
+    header: 'Height (cm)',
+    group: 'Patient data',
+    description: 'Height in centimetres',
+    width: 12,
+    numberFormat: '0.0',
+  },
+  {
+    key: 'bmi',
+    header: 'BMI',
+    group: 'Patient data',
+    description: 'Body mass index (kg/m²)',
+    width: 10,
+    numberFormat: '0.0',
+  },
+  {
+    key: 'ibw_kg',
+    header: 'IBW (kg)',
+    group: 'Patient data',
+    description: 'Ideal body weight (kg) using the IBW formula selected in the app',
+    width: 12,
+    numberFormat: '0.0',
+  },
+  {
+    key: 'safe_dose_range',
+    header: 'Safe dose range (mg/day)',
+    group: 'Patient data',
+    description:
+      'Min–max of guideline max daily doses (AAO ABW, IBW, hybrid); most restrictive to least restrictive ceiling',
+    width: 24,
+  },
+];
+
+export type StudyDataRow = Record<string, string | number>;
+
+export function studyRowToOrderedValues(row: StudyDataRow): (string | number)[] {
+  return STUDY_DATA_COLUMNS.map((col) => row[col.key] ?? '');
+}
+
+export const HCQ_DOSE_OPTIONS = ['200', '300', '400'] as const;
 
 function methodColumns(prefix: string, group: string, methodLabel: string): ColumnDef[] {
   return [
@@ -66,7 +159,9 @@ export const RESEARCH_COLUMNS: ColumnDef[] = [
   { key: 'patient_id', header: 'Patient ID', group: 'Record', description: 'Anonymous sequential patient identifier (no PHI)', width: 14 },
   { key: 'encounter_date', header: 'Encounter date', group: 'Record', description: 'Date of assessment (YYYY-MM-DD)', width: 14 },
 
+  { key: 'gender', header: 'Gender', group: 'Inputs', description: 'Male or Female (display label)', width: 10 },
   { key: 'sex', header: 'Sex', group: 'Inputs', description: 'Biological sex used for IBW formula', width: 10 },
+  { key: 'hcq_duration_years', header: 'HCQ duration (yr)', group: 'Inputs', description: 'Duration of HCQ use in years (0–100)', width: 16 },
   { key: 'height_cm', header: 'Height (cm)', group: 'Inputs', description: 'Height normalised to centimetres', width: 12 },
   { key: 'height_entered', header: 'Height entered', group: 'Inputs', description: 'Height as entered in the UI', width: 14 },
   { key: 'height_unit', header: 'Height unit', group: 'Inputs', description: 'cm or ft/in', width: 12 },
@@ -79,11 +174,15 @@ export const RESEARCH_COLUMNS: ColumnDef[] = [
   { key: 'abw_kg', header: 'ABW (kg)', group: 'Anthropometrics', description: 'Actual body weight (kg)', width: 10 },
   { key: 'ibw_nhlbi_kg', header: 'IBW NIH/NHLBI (kg)', group: 'Anthropometrics', description: 'Ideal body weight via NIH/NHLBI formula', width: 18 },
   { key: 'ibw_devine_kg', header: 'IBW Devine (kg)', group: 'Anthropometrics', description: 'Ideal body weight via Devine formula', width: 16 },
+  { key: 'ibw_kg', header: 'IBW UI (kg)', group: 'Anthropometrics', description: 'Ideal body weight using UI-selected IBW algorithm', width: 14 },
   { key: 'dosing_weight_kg', header: 'Dosing weight UI (kg)', group: 'Anthropometrics', description: 'min(ABW, IBW) using UI-selected IBW algorithm', width: 18 },
   { key: 'dosing_weight_nhlbi_kg', header: 'Dosing wt NHLBI (kg)', group: 'Anthropometrics', description: 'min(ABW, IBW NIH/NHLBI)', width: 18 },
   { key: 'dosing_weight_devine_kg', header: 'Dosing wt Devine (kg)', group: 'Anthropometrics', description: 'min(ABW, IBW Devine)', width: 18 },
   { key: 'bmi', header: 'BMI', group: 'Anthropometrics', description: 'Body mass index from ABW and height', width: 8 },
   { key: 'severe_obesity_bmi35', header: 'BMI ≥35', group: 'Anthropometrics', description: 'Y if BMI ≥ 35 (severe obesity cap applies)', width: 10 },
+  { key: 'safe_dose_min_mg', header: 'Safe max (min)', group: 'Dose range', description: 'Most restrictive max daily dose across AAO, IBW, hybrid (mg/day)', width: 14 },
+  { key: 'safe_dose_max_mg', header: 'Safe max (max)', group: 'Dose range', description: 'Least restrictive max daily dose across methods (mg/day)', width: 14 },
+  { key: 'safe_dose_range', header: 'Safe dose range', group: 'Dose range', description: 'Formatted min–max safe daily dose ceiling (mg/day)', width: 22 },
 
   ...methodColumns('aao_abw', 'AAO (ABW)', 'AAO ≤5.0 mg/kg actual body weight'),
   ...methodColumns('ibw_nhlbi', 'IBW NIH/NHLBI', 'IBW ≤6.5 mg/kg (NIH/NHLBI)'),

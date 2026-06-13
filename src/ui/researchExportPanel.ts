@@ -99,7 +99,9 @@ export function renderResearchExportPanel(): string {
             </button>
           </div>
           <p class="research-export__note">
-            Each save requires a unique Patient ID on the Patient ID tab. The workbook includes all saved cases with AAO, IBW, and hybrid columns plus a data dictionary.
+            Each save requires a unique Patient ID on the Patient ID tab. The workbook opens on
+            <strong>Study_Data</strong> — nine patient columns with dropdowns (gender, dose, duration)
+            plus safe dose range — and includes <strong>Detailed_Data</strong> for full technical output.
           </p>
         </div>
       </div>
