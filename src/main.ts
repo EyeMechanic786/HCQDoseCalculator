@@ -8,6 +8,7 @@ import {
   handleDownloadWorkbook,
   handleExportCurrentCase,
 } from './export/researchActions.ts';
+import { updatePatientIdDisplay } from './export/patientId.ts';
 import { renderStickyPrintBar } from './ui/printBar.ts';
 import { showPrintNotice } from './ui/printNotice.ts';
 import type { AppDesign, HcqAssessment, PatientInput, ScreeningRiskFactors } from './types.ts';
@@ -21,6 +22,7 @@ import { loadDesign, renderDesignSwitcher, saveDesign } from './ui/design.ts';
 import { renderDisclaimer } from './ui/disclaimer.ts';
 import { renderBedsideResults } from './ui/resultsPanelBedside.ts';
 import { renderResultsPanel } from './ui/resultsPanel.ts';
+import { switchResearchTab } from './ui/researchExportPanel.ts';
 import './style.css';
 import './style-bedside.css';
 
@@ -243,6 +245,7 @@ function renderApp(): void {
 
   bindFormEvents();
   compute();
+  updatePatientIdDisplay();
 }
 
 function bindFormEvents(): void {
@@ -301,6 +304,13 @@ app.addEventListener('click', (e) => {
   if (target.closest('[data-action="print"]')) {
     e.preventDefault();
     handlePrint();
+    return;
+  }
+
+  const researchTab = target.closest('[data-research-tab]') as HTMLElement | null;
+  if (researchTab?.dataset.researchTab) {
+    e.preventDefault();
+    switchResearchTab(researchTab.dataset.researchTab);
     return;
   }
 

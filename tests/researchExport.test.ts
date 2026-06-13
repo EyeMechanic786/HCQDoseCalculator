@@ -36,7 +36,7 @@ describe('buildResearchRow', () => {
         layoutUsed: 'dashboard',
         studyId: 'TEST-STUDY',
         siteId: 'Site-A',
-        subjectId: '001',
+        patientId: '000010',
         encounterDate: '2026-06-13',
       },
     });
@@ -57,11 +57,12 @@ describe('buildResearchRow', () => {
         layoutUsed: 'dashboard',
         studyId: '',
         siteId: '',
-        subjectId: '',
+        patientId: '000010',
         encounterDate: '2026-06-13',
       },
     });
 
+    expect(row.patient_id).toBe('000010');
     expect(row.ibw_nhlbi_kg).toBe(63.7);
     expect(row.ibw_devine_kg).toBe(55.1);
     expect(row.aao_abw_status).toBe('caution');
@@ -81,7 +82,7 @@ describe('buildResearchRow', () => {
         layoutUsed: 'bedside',
         studyId: '',
         siteId: '',
-        subjectId: '002',
+        patientId: '000011',
         encounterDate: '2026-06-13',
       },
     });

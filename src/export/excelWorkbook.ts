@@ -109,7 +109,7 @@ function addStudyDataSheet(workbook: ExcelJS.Workbook, rows: ResearchRow[], meta
   sheet.getRow(2).font = { size: 10 };
 
   sheet.getCell('A3').value =
-    'For authorised research use only. Anonymised subject IDs only — no patient identifiable information.';
+    'For authorised research use only. Anonymous Patient IDs only — no identifiable information.';
   sheet.mergeCells(`A3:${lastColLetter}3`);
   sheet.getCell('A3').font = { italic: true, size: 9, color: { argb: 'FF64748B' } };
 

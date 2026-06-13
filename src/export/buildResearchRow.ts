@@ -19,7 +19,7 @@ export interface BuildResearchRowMeta {
   layoutUsed: AppDesign;
   studyId: string;
   siteId: string;
-  subjectId: string;
+  patientId: string;
   encounterDate: string;
 }
 
@@ -105,7 +105,7 @@ export function buildResearchRow(input: BuildResearchRowInput): ResearchRow {
     layout_used: layoutUsed,
     study_id: meta.studyId,
     site_id: meta.siteId,
-    subject_id: meta.subjectId,
+    patient_id: meta.patientId,
     encounter_date: meta.encounterDate,
 
     sex: patientInput.sex,
@@ -180,7 +180,7 @@ export function buildResearchRowFromState(
   formState: FormState,
   patientInput: PatientInput,
   layoutUsed: AppDesign,
-  subjectId: string,
+  patientId: string,
   studyId: string,
   siteId: string,
   recordId: string,
@@ -196,7 +196,7 @@ export function buildResearchRowFromState(
       layoutUsed,
       studyId,
       siteId,
-      subjectId,
+      patientId,
       encounterDate,
     },
   });

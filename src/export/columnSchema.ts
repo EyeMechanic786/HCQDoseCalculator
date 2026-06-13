@@ -63,7 +63,7 @@ export const RESEARCH_COLUMNS: ColumnDef[] = [
   { key: 'layout_used', header: 'Layout', group: 'Record', description: 'Dashboard or bedside UI layout', width: 12 },
   { key: 'study_id', header: 'Study ID', group: 'Record', description: 'Optional anonymised study identifier', width: 14 },
   { key: 'site_id', header: 'Site ID', group: 'Record', description: 'Optional site identifier', width: 12 },
-  { key: 'subject_id', header: 'Subject ID', group: 'Record', description: 'Anonymised subject number (no PHI)', width: 14 },
+  { key: 'patient_id', header: 'Patient ID', group: 'Record', description: 'Anonymous sequential patient identifier (no PHI)', width: 14 },
   { key: 'encounter_date', header: 'Encounter date', group: 'Record', description: 'Date of assessment (YYYY-MM-DD)', width: 14 },
 
   { key: 'sex', header: 'Sex', group: 'Inputs', description: 'Biological sex used for IBW formula', width: 10 },

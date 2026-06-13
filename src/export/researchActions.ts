@@ -1,4 +1,5 @@
 import { buildResearchRowFromState, todayIsoDate } from './buildResearchRow.ts';
+import { allocatePatientId, resetPatientIdSequence } from './patientId.ts';
 import { readStudyMetaFromDom } from './studyMeta.ts';
 import {
   addToStudyLog,
@@ -15,10 +16,6 @@ export interface ResearchExportResult {
   message: string;
 }
 
-function readSubjectId(): string {
-  return (document.getElementById('research-subject-id') as HTMLInputElement)?.value.trim() ?? '';
-}
-
 function readEncounterDate(): string {
   const value = (document.getElementById('research-encounter-date') as HTMLInputElement)?.value;
   return value || todayIsoDate();
@@ -28,13 +25,14 @@ export function buildCurrentResearchRow(
   formState: FormState,
   patientInput: PatientInput,
   layoutUsed: AppDesign,
+  patientId: string,
 ) {
   const meta = readStudyMetaFromDom();
   return buildResearchRowFromState(
     formState,
     patientInput,
     layoutUsed,
-    readSubjectId(),
+    patientId,
     meta.studyId,
     meta.siteId,
     createRecordId(),
@@ -47,12 +45,13 @@ export function handleAddToStudyLog(
   patientInput: PatientInput,
   layoutUsed: AppDesign,
 ): ResearchExportResult {
-  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed);
+  const patientId = allocatePatientId();
+  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
   addToStudyLog(row);
   updateLogBadge();
   return {
     success: true,
-    message: `Case ${row.record_id} added to study log (${getStudyLog().length} total).`,
+    message: `Patient ${patientId} saved to study log (${getStudyLog().length} total).`,
   };
 }
 
@@ -66,7 +65,8 @@ export async function handleDownloadWorkbook(
   let rows = getStudyLog();
 
   if (rows.length === 0 && includeCurrentIfValid && patientInput) {
-    rows = [buildCurrentResearchRow(formState, patientInput, layoutUsed)];
+    const patientId = allocatePatientId();
+    rows = [buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId)];
   }
 
   if (rows.length === 0) {
@@ -97,14 +97,15 @@ export async function handleExportCurrentCase(
   layoutUsed: AppDesign,
 ): Promise<ResearchExportResult> {
   const meta = readStudyMetaFromDom();
-  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed);
+  const patientId = allocatePatientId();
+  const row = buildCurrentResearchRow(formState, patientInput, layoutUsed, patientId);
 
   try {
     const { exportResearchWorkbook } = await import('./excelWorkbook.ts');
     await exportResearchWorkbook([row], meta.studyId, meta.siteId);
     return {
       success: true,
-      message: `Exported case ${row.record_id} to Excel.`,
+      message: `Exported Patient ${patientId} to Excel.`,
     };
   } catch {
     return {
@@ -118,10 +119,15 @@ export function handleClearStudyLog(): ResearchExportResult {
   if (getStudyLog().length === 0) {
     return { success: false, message: 'Study log is already empty.' };
   }
-  if (!window.confirm('Clear all cases from the study log? This cannot be undone.')) {
+  if (
+    !window.confirm(
+      'Clear all cases from the study log? Patient ID sequence will reset to 000010. This cannot be undone.',
+    )
+  ) {
     return { success: false, message: 'Clear cancelled.' };
   }
   clearStudyLog();
+  resetPatientIdSequence();
   updateLogBadge();
-  return { success: true, message: 'Study log cleared.' };
+  return { success: true, message: 'Study log cleared. Next Patient ID: 000010.' };
 }

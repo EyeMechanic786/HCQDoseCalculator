@@ -780,11 +780,98 @@ tr.status--exceeds {
 }
 
 .research-export__body {
-  padding: 1rem;
+  padding: 0;
   background: #fdf2f8;
   border: 2px solid #f9a8d4;
   border-radius: 0 10px 10px 10px;
   margin-top: -2px;
+  overflow: hidden;
+}
+
+.research-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #f9a8d4;
+  background: #fce7f3;
+}
+
+.research-tabs__tab {
+  flex: 1;
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #9d174d;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.research-tabs__tab:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.research-tabs__tab.is-active {
+  background: #fdf2f8;
+  color: #831843;
+  border-bottom-color: #db2777;
+}
+
+.research-tab-panel {
+  padding: 1rem;
+}
+
+.research-tab-panel[hidden] {
+  display: none;
+}
+
+.patient-id-card {
+  text-align: center;
+  padding: 1.25rem 1rem;
+  margin-bottom: 1rem;
+  background: #fff;
+  border: 2px solid #f9a8d4;
+  border-radius: 10px;
+}
+
+.patient-id-card__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #be185d;
+}
+
+.patient-id-card__label {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #831843;
+}
+
+.patient-id-card__value {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 2.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  color: #9d174d;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+
+.patient-id-card__note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #831843;
+  text-align: left;
+}
+
+.research-export__field--date {
+  max-width: 14rem;
 }
 
 .research-export__intro {
