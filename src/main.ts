@@ -20,9 +20,10 @@ import {
 } from './ui/calculatorForm.ts';
 import { loadDesign, renderDesignSwitcher, saveDesign } from './ui/design.ts';
 import { initDisclaimer, renderDisclaimer } from './ui/disclaimer.ts';
+import { renderClinicalOutcomes } from './ui/clinicalOutcomesForm.ts';
 import { renderBedsideResults } from './ui/resultsPanelBedside.ts';
 import { renderResultsPanel } from './ui/resultsPanel.ts';
-import { switchResearchTab } from './ui/researchExportPanel.ts';
+import { renderResearchExportPanel, switchResearchTab } from './ui/researchExportPanel.ts';
 import { initPwa } from './pwa.ts';
 import './style.css';
 import './style-bedside.css';
@@ -273,6 +274,10 @@ function renderApp(): void {
         <div id="form-root">${formHtml}</div>
         <div id="results-root" tabindex="-1"></div>
       </div>
+      <div id="decision-root" class="decision-band">
+        ${renderClinicalOutcomes(formState)}
+        ${renderResearchExportPanel()}
+      </div>
     </main>
     <footer class="site-footer">
       <p>Formula version: AAO 2026 · NIH/NHLBI IBW · Browning lesser-of-weight · v1.1</p>
@@ -286,10 +291,11 @@ function renderApp(): void {
 }
 
 function bindFormEvents(): void {
+  const main = document.getElementById('main');
   const formRoot = document.getElementById('form-root');
-  if (!formRoot) return;
+  if (!main || !formRoot) return;
 
-  formRoot.addEventListener('input', (e) => {
+  main.addEventListener('input', (e) => {
     if ((e.target as HTMLElement).id === 'research-patient-id') {
       saveDraftPatientId((e.target as HTMLInputElement).value);
     }
@@ -297,12 +303,12 @@ function bindFormEvents(): void {
     compute();
   });
 
-  formRoot.addEventListener('change', () => {
+  main.addEventListener('change', () => {
     readFormFromDom();
     compute();
   });
 
-  formRoot.addEventListener(
+  main.addEventListener(
     'toggle',
     (e) => {
       const target = e.target as HTMLElement;

@@ -307,6 +307,31 @@ body {
   font-weight: 700;
 }
 
+.decision-band {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.decision-panel__hint {
+  margin: -0.35rem 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.decision-panel__fields {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 700px) {
+  .decision-panel__fields {
+    grid-template-columns: minmax(12rem, 18rem) minmax(16rem, 1fr);
+    align-items: start;
+  }
+}
+
 @media (min-width: 900px) {
   .layout {
     grid-template-columns: 1fr 1.2fr;
@@ -1213,6 +1238,7 @@ tr.status--exceeds {
   .site-header,
   .site-footer,
   #form-root,
+  .decision-panel,
   .btn,
   .research-export,
   .references summary,

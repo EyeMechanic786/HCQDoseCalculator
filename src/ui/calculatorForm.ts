@@ -1,8 +1,6 @@
 import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
 import type { HeightUnit, IbwAlgorithm, RetinalToxicityLevel, Sex, WeightUnit, YesNo } from '../types.ts';
-import { renderClinicalOutcomes } from './clinicalOutcomesForm.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
-import { renderResearchExportPanel } from './researchExportPanel.ts';
 
 export interface FormState {
   sex: Sex;
@@ -52,9 +50,9 @@ export function renderCalculatorForm(state: FormState): string {
   return `
     <section class="panel" aria-labelledby="calc-heading">
       <h2 id="calc-heading">Patient &amp; dose</h2>
-      <p class="layout-hint layout-hint--desktop">Dose results appear in the panel to the right once data is entered.</p>
+      <p class="layout-hint layout-hint--desktop">Calculated doses appear in the panel to the right. Record the clinical decision below the results.</p>
       <p class="layout-hint layout-hint--mobile">
-        <a href="#results-root" class="layout-hint__link">Scroll down to Results</a> for the dose comparison table.
+        <a href="#results-root" class="layout-hint__link">Calculated doses</a> follow these measurements. The clinical decision is at the bottom.
       </p>
       <form id="calc-form" class="calc-form" novalidate>
         <fieldset class="field-group">
@@ -137,12 +135,8 @@ export function renderCalculatorForm(state: FormState): string {
           </select>
         </label>
 
-        ${renderClinicalOutcomes(state)}
-
         ${renderScreeningRiskFactors(state)}
       </form>
-
-      ${renderResearchExportPanel()}
     </section>
   `;
 }

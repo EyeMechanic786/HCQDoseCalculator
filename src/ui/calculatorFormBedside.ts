@@ -1,8 +1,6 @@
 import type { FormState } from './calculatorForm.ts';
 import { HCQ_DOSE_OPTIONS } from '../export/columnSchema.ts';
-import { renderClinicalOutcomes } from './clinicalOutcomesForm.ts';
 import { renderScreeningRiskFactors } from './riskFactorsForm.ts';
-import { renderResearchExportPanel } from './researchExportPanel.ts';
 
 /** DoseChecker-inspired compact input layout — height, weight, dose first. */
 export function renderBedsideForm(state: FormState): string {
@@ -10,7 +8,7 @@ export function renderBedsideForm(state: FormState): string {
     <section class="bedside-card bedside-card--inputs" aria-labelledby="bedside-inputs-heading">
       <h2 id="bedside-inputs-heading" class="bedside-card__title">Enter patient data</h2>
       <p class="layout-hint layout-hint--mobile">
-        <a href="#results-root" class="layout-hint__link">Scroll down to Results</a> for the dose assessment.
+        <a href="#results-root" class="layout-hint__link">Calculated doses</a> follow these measurements. The clinical decision is at the bottom.
       </p>
       <form id="calc-form" class="bedside-form" novalidate>
         <div class="bedside-segment" role="group" aria-label="Sex">
@@ -72,8 +70,6 @@ export function renderBedsideForm(state: FormState): string {
           </label>
         </div>
 
-        ${renderClinicalOutcomes(state)}
-
         ${renderScreeningRiskFactors(state)}
 
         <details class="bedside-advanced">
@@ -86,8 +82,6 @@ export function renderBedsideForm(state: FormState): string {
           </label>
         </details>
       </form>
-
-      ${renderResearchExportPanel()}
     </section>
   `;
 }
